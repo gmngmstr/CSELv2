@@ -3,6 +3,7 @@ Added python and python tk installer
 Modified crontab entry
 Added CCC and SoCalCCCC logos
 Added a line to create a linked file from the /usr/local/bin/ to the desktop for the scoring report
+Removed installer for python an python-tk and moved them to an initiate.sh and added a line to launch the configurator.py
 
 #List of modifications to configurator.py
 Added a full save function
@@ -36,6 +37,7 @@ Renamed serviceRunning to badService
 Added password complexity and password history options
 Maked window start fullscreen
 Modified variables to save the scoring report to the same location a the scoring engine to remove ghosing on the desktop
+Maked 'Write to Config' also run install.sh
 
 #List of modifications to payload
 Fixed score totaler
@@ -60,6 +62,6 @@ Added notifications for gaining and loosing points
 
 *Retest everything
 
-*Make 'Write to Config' also run install.sh and any other scripts needed
+* and any other scripts needed
 *Make Readme generator and setting setter
 *Update all of the explanations
