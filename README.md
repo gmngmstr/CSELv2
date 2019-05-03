@@ -71,8 +71,6 @@ The settings are saved in the csel.txt file
 1. The program will leave ghost files on the desktop
 2. Add install updates frequency option
 3. Set up notifications for gaining and loosing points
-	notify-send "You Got Points!!"
-	make a score file to hold score record
 4. Update all of the explanations
 5. Make Readme generator and setting setter (Maybe)
 6. Make 'Write to Config' also run install.sh and any other scripts needed
