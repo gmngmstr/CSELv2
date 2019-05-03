@@ -47,19 +47,19 @@ CSEL can be run with "silent misses" which simulates a CyberPatriot round where 
 1. Set up your image and put your vulnerabilities in place.
 2. Install the following prerequisites: git and python-tk.  **install.sh also has the python-tk installation implemented
 3. Clone into CSEL by typing: sudo git clone https://github.com/gmngmstr/CSELv2.git
-4. Run python configurator.py to set up the config file. 
-5. Run the installer by typing `sudo ./install` in the CSEL directory.
+4. Run `sudo python configurator.py` to set up the config file. 
+5. Run the installer by typing `sudo ./install.sh` in the CSEL directory.
 6. After you are satisfied that it is working how you want, you can delete the CSEL directory.
 
 ## How to install without git
 1) To install the scoring engine extrct the folder to the desktop of the linux image
-2) In a terminal cd to the folder and type sudo ./install.sh
+2) In a terminal cd to the folder and type sudo `sudo ./install.sh`
 	This will install any missing programs needed to run the configurator
-3) Then type sudo python configurator.py in the terminal
+3) Then type `sudo python configurator.py` in the terminal
 	This will launch a GUI for configuring the scoring settings
 4) The settings can be saved and loaded using the respective buttons
-5) Once finished click Write to Config at the bottom of the page
-6) Then type ./install.sh in the terminal
+5) Once finished click `Write to Config` at the bottom of the page
+6) Then type `sudo ./install.sh` in the terminal
 
 Notes:
 To add multiple keywords use spaces not commas
