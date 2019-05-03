@@ -33,5 +33,6 @@ echo -e 'DONE\nFiring csel for the first time...'
 #Finish up
 scoreReportLoc=$( grep -Po '(?<=indexD=\().*?(?=\))' csel.cfg )
 cd $scoreReportLoc
-ln  /usr/local/bin/ScoreReport.html
+rm ScoreReport.html
+ln /usr/local/bin/ScoreReport.html
 echo -e 'DONE\n----------------------------------\n\nScore Report is located at:' $scoreReportLoc

@@ -48,6 +48,8 @@ recordPenalty(){ #Use: recordPenalty <Issue> <a negative number>
 }
 
 drawHead(){ #Create the Score Report html 
+	cd $indexD
+	rm ScoreReport.html
 	echo '<!doctype html><html><head><title>CSEL Score Report</title><meta http-equiv="refresh" content="30"></head><body style="background-color:powderblue;">' > $index
 	echo '<table align="center" cellpadding="10"><tr><td><img src="/etc/CYBERPATRIOT_DO_NOT_REMOVE/logo.png"></td><td><img src="/etc/CYBERPATRIOT_DO_NOT_REMOVE/iguana.png"></td><td><div align="center"><H2>Cyberpatriot Scoring Engine:Linux v0.5</H2></div></td><td><img src="/etc/CYBERPATRIOT_DO_NOT_REMOVE/SoCalCCCC.png"></td><td><img src="/etc/CYBERPATRIOT_DO_NOT_REMOVE/CCC_logo.png"></td></tr></table><br><H2>Your Score: #TotalScore# out of #PossiblePoints#</H2><hr>' >> $index
 }
@@ -56,6 +58,8 @@ drawTail(){ #Finish up report (insert score and possible points)
 	sed -i "s/#TotalScore#/"$imageScore"/g" $index
 	sed -i "s/#PossiblePoints#/"$posPoints"/g" $index
 	echo '<hr><div align="center"><br>Developed by Josh Davis<br><b>Eastern Oklahoma County Technology Center/Coastline Collage</b><br>Feedback welcome: <a href="mailto:jdavis@eoctech.edu?Subject=CSEL" target="_top">jdavis@eoctech.edu</a><br>Modified/Updated by Shaun Martin</br><b>Coastline Collage</b><br>Feedback welcome: <a href="mailto:smartin94@student.cccd.edu?Subject=CSEL Scoring Engine" target="_top">smartin94@student.cccd.edu</a></div>' >> $index
+	cd $indexD
+	ln /usr/local/bin/ScoreReport.html
 }
 
 #Frame1
@@ -112,6 +116,10 @@ disableUserGreeter(){
 
 dissableSshRootLogin(){
 	if [ -z "disableSshRootLogin" ]; then :; else addPosPoints $disableSshRootLoginValue
+		if [ ! -d "/etc/ssh/sshd_config" ] ; then
+			apt-get update
+			apt-get install ssh
+		fi
 		if [[ $(cat /etc/ssh/sshd_config | grep "PermitRootLogin no") ]] ; then
 			recordHit 'SSH root login disabled.' $disableSshRootLoginValue
 		else

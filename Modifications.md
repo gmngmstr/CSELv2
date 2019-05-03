@@ -4,6 +4,7 @@
 - Added CCC and SoCalCCCC logos
 - Added a line to create a linked file from the /usr/local/bin/ to the desktop for the scoring report
 - Removed installer for python an python-tk and moved them to an initiate.sh and added a line to launch the configurator.py
+- Added the creation of a link on the desktop pointing to the scoring report in the same location as the scoring engine
 
 ## List of modifications to configurator.py
 - Added a full save function
@@ -38,6 +39,7 @@
 - Made window start full-screen
 - Modified variables to save the scoring report to the same location a the scoring engine to remove ghosting on the desktop
 - Made 'Write to Config' also run install.sh
+- Changed index to the location of the scoring engine and indexD to the location of the Desktop
 
 ## List of modifications to payload
 - Fixed score totaler
@@ -56,6 +58,8 @@
 - Added password complexity option
 - Added CCC and SoCalCCCC logos and my information as a modifier/updater
 - Added notifications for gaining and loosing points
+- Added the creation of a link on the desktop pointing to the scoring report in the same location as the scoring engine
+- Added the installer for ssh when the sshd_config does not exists
 
 ## TODO
 - Add install updates frequency option

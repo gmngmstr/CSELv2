@@ -156,39 +156,41 @@ def saveForQ():
 		g = open((str(usrDsktp.get())+'Question1.txt'),'w+')
 		g.write(qHeader+fquest01.get()+qFooter)
 		g.close()
+		os.chmod((str(usrDsktp.get())+'Question1.txt'), 0777)
 	if fqcb02.get() != 0:
 		for line in (line2a,line2b,line2c,line2d):
 			f.write(line)
 		h = open((str(usrDsktp.get())+'Question2.txt'),'w+')
 		h.write(qHeader+fquest02.get()+qFooter)
 		h.close()
+		os.chmod((str(usrDsktp.get())+'Question2.txt'), 0777)
 	f.close()
-	os.chmod((str(usrDsktp.get())+'Question1.txt'), 0777)
-	os.chmod((str(usrDsktp.get())+'Question2.txt'), 0777)
 	
 def createForQ():
-    qHeader='This is a forensics question. Answer it below\n------------------------\n'
-    qFooter='\n\nANSWER: <TypeAnswerHere>'
-    f = open('csel.cfg','a')  
-    line1a = 'forensicsPath1=('+str(usrDsktp.get())+'Question1.txt)\n'
-    line1b = 'forensicsAnswer1=('+fqans01.get()+')\n'
-    line1c = 'checkForensicsQuestion1Value=('+str(fqpts01.get())+')\n'
-    line2a = 'forensicsPath2=('+str(usrDsktp.get())+'Question2.txt)\n'
-    line2b = 'forensicsAnswer2=('+fqans02.get()+')\n'
-    line2c = 'checkForensicsQuestion2Value=('+str(fqpts02.get())+')\n'
-    if fqcb01.get() != 0:
-        for line in (line1a,line1b,line1c):
-            f.write(line)
-        g = open((str(usrDsktp.get())+'Question1.txt'),'w+')
-        g.write(qHeader+fquest01.get()+qFooter)
-        g.close()
-    if fqcb02.get() != 0:
-        for line in (line2a,line2b,line2c):
-            f.write(line)
-        h = open((str(usrDsktp.get())+'Question2.txt'),'w+')
-        h.write(qHeader+fquest02.get()+qFooter)
-        h.close()
-    f.close()
+	qHeader='This is a forensics question. Answer it below\n------------------------\n'
+	qFooter='\n\nANSWER: <TypeAnswerHere>'
+	f = open('csel.cfg','a')  
+	line1a = 'forensicsPath1=('+str(usrDsktp.get())+'Question1.txt)\n'
+	line1b = 'forensicsAnswer1=('+fqans01.get()+')\n'
+	line1c = 'checkForensicsQuestion1Value=('+str(fqpts01.get())+')\n'
+	line2a = 'forensicsPath2=('+str(usrDsktp.get())+'Question2.txt)\n'
+	line2b = 'forensicsAnswer2=('+fqans02.get()+')\n'
+	line2c = 'checkForensicsQuestion2Value=('+str(fqpts02.get())+')\n'
+	if fqcb01.get() != 0:
+		for line in (line1a,line1b,line1c):
+			f.write(line)
+		g = open((str(usrDsktp.get())+'Question1.txt'),'w+')
+		g.write(qHeader+fquest01.get()+qFooter)
+		g.close()
+		os.chmod((str(usrDsktp.get())+'Question1.txt'), 0777)
+	if fqcb02.get() != 0:
+		for line in (line2a,line2b,line2c):
+			f.write(line)
+		h = open((str(usrDsktp.get())+'Question2.txt'),'w+')
+		h.write(qHeader+fquest02.get()+qFooter)
+		h.close()
+		os.chmod((str(usrDsktp.get())+'Question2.txt'), 0777)
+	f.close()
 
 #What happens when you click Submit?
 def submitCallback():
