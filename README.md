@@ -66,7 +66,8 @@ To add multiple keywords use spaces not commas
 The settings are saved in the csel.txt file
 
 **Important Note**: Your students _will_ be able to see the vulnerabilities if you leave the CSEL folder behind or if they cat the executable file that is created in /usr/local/bin/. I tell my students where the file is and that they should stay away from it. It is practice, after all.
-##Known issues and planned updates
+
+## Known issues and planned updates
 1. The program will leave ghost files on the desktop
 2. Add install updates frequency option
 3. Set up notifications for gaining and loosing points
