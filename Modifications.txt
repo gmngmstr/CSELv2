@@ -35,9 +35,9 @@ Renamed many variables for readability
 Added option for goodService
 Renamed serviceRunning to badService
 Added password complexity and password history options
-Maked window start fullscreen
-Modified variables to save the scoring report to the same location a the scoring engine to remove ghosing on the desktop
-Maked 'Write to Config' also run install.sh
+Made window start full-screen
+Modified variables to save the scoring report to the same location a the scoring engine to remove ghosting on the desktop
+Made 'Write to Config' also run install.sh
 
 #List of modifications to payload
 Fixed score totaler
