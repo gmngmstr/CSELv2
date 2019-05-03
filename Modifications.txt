@@ -62,6 +62,5 @@ Added notifications for gaining and loosing points
 
 *Retest everything
 
-* and any other scripts needed
 *Make Readme generator and setting setter
 *Update all of the explanations
