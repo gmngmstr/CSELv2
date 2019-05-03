@@ -10,16 +10,17 @@ addScore(){ #Add points to your total score
 
 checkPointUpdates() { #look for point changes and post a notification when there is a change
 	pointUpdate=$(cat /etc/CYBERPATRIOT_DO_NOT_REMOVE/score)
-	if ["$pointUpdate" == ""] ; then
+	if [ "$pointUpdate" == "" ] ; then
 		pointUpdate=0
+		echo $imageScore > /etc/CYBERPATRIOT_DO_NOT_REMOVE/score
 	fi
-	if ["$imageScore" > "$pointUpdate"] ; then
+	if [ $imageScore \> $pointUpdate ] ; then
 		notify-send "You Got Points!!"
-		$imageScore > /etc/CYBERPATRIOT_DO_NOT_REMOVE/score
+		echo $imageScore > /etc/CYBERPATRIOT_DO_NOT_REMOVE/score
 	fi
-	if ["$imageScore" < "$pointUpdate"] ; then
+	if [ $imageScore \< $pointUpdate ] ; then
 		notify-send "You Lost Points!!"
-		$imageScore > /etc/CYBERPATRIOT_DO_NOT_REMOVE/score
+		echo $imageScore > /etc/CYBERPATRIOT_DO_NOT_REMOVE/score
 	fi
 }
 

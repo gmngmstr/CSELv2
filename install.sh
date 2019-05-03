@@ -35,5 +35,7 @@ echo -e 'DONE\nFiring csel for the first time...'
 /usr/local/bin/csel_SCORING_ENGINE_DO_NOT_TOUCH
 
 #Finish up
-scoreReportLoc=$( grep -Po '(?<=index=\().*?(?=\))' csel.cfg )
+scoreReportLoc=$( grep -Po '(?<=indexD=\().*?(?=\))' csel.cfg )
+cd $scoreReportLoc
+ln  /usr/local/bin/ScoreReport.html
 echo -e 'DONE\n----------------------------------\n\nScore Report is located at:' $scoreReportLoc

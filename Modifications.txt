@@ -2,6 +2,7 @@
 Added python and python tk installer
 Modified crontab entry
 Added CCC and SoCalCCCC logos
+Added a line to create a linked file from the /usr/local/bin/ to the desktop for the scoring report
 
 #List of modifications to configurator.py
 Added a full save function
@@ -34,6 +35,7 @@ Added option for goodService
 Renamed serviceRunning to badService
 Added password complexity and password history options
 Maked window start fullscreen
+Modified variables to save the scoring report to the same location a the scoring engine to remove ghosing on the desktop
 
 #List of modifications to payload
 Fixed score totaler
@@ -51,12 +53,10 @@ Renamed serviceRunning to badService
 Modified password history
 Added password complexity option
 Added CCC and SoCalCCCC logos and my information as a modifier/updater
+Added notifications for gaining and loosing points
 
 #TODO
 *Add install updates frequency option
-*Set up notifications for gaining and loosing points
-	notify-send "You Got Points!!"
-	make a score file to hold score record
 
 *Retest everything
 

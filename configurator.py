@@ -206,7 +206,7 @@ def submitCallback():
 		vuln.kw = key.get()
 		vuln.kwe = keyEx.get()
 		writeToConfig(vuln.name,vuln.points,vuln.enabled,vuln.loc,vuln.kw,vuln.kwe)
-	configFooter="index=("+usrDsktp.get()+"ScoreReport.html)\n#These values will change during install\nimageScore=0\nposPoints=0\nrelease=\"\"\ninitialKernel=(%KERNEL%)\ninstallDate=(%INSTALLDATE%)\n"
+	configFooter="index=(/usr/local/bin/ScoreReport.html)\nindexD=("+usrDsktp.get()+")\n#These values will change during install\nimageScore=0\nposPoints=0\nrelease=\"\"\ninitialKernel=(%KERNEL%)\ninstallDate=(%INSTALLDATE%)\n"
 	f.write(configFooter)
 	f.close()
 	root.destroy()
