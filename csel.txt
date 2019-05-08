@@ -1,7 +1,0 @@
-Desktop=/home/cyberpatriot/Desktop/
-disableSshRootLogin=(y)
-disableSshRootLoginValue=(3)
-checkPassHist=(y)
-checkPassHistValue=(3)
-checkPassCompx=(y)
-checkPassCompxValue=(3)
