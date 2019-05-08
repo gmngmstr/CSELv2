@@ -66,9 +66,7 @@ The settings are saved in the csel.txt file
 **Important Note**: Your students _will_ be able to see the vulnerabilities if you leave the CSEL folder behind or if they cat the executable file that is created in /usr/local/bin/. I tell my students where the file is and that they should stay away from it. It is practice, after all.
 
 ## Known issues and planned updates
-1. The program will leave ghost files on the desktop
-2. Add install updates frequency option
-3. Set up notifications for gaining and loosing points
-4. Update all of the explanations
-5. Make Readme generator and setting setter (Maybe)
-6. Make 'Write to Config' also run install.sh and any other scripts needed
+- Add install updates frequency option
+- Update all of the explanations
+- Make Readme generator and setting setter (Maybe)
+- Make 'Write to Config' also run install.sh and any other scripts needed
