@@ -18,19 +18,19 @@ fi
 echo -e 'DONE\nCreating /etc/CYBERPATRIOT directory for icons...'
 if [ ! -d "/etc/CYBERPATRIOT_DO_NOT_REMOVE" ]
 then
+	#Add the images for the scoring report to the computer
 	mkdir /etc/CYBERPATRIOT_DO_NOT_REMOVE
 	cp logo.png /etc/CYBERPATRIOT_DO_NOT_REMOVE/logo.png
 	cp iguana.png /etc/CYBERPATRIOT_DO_NOT_REMOVE/iguana.png
 	cp CCC_logo.png /etc/CYBERPATRIOT_DO_NOT_REMOVE/CCC_logo.png
 	cp SoCalCCCC.png /etc/CYBERPATRIOT_DO_NOT_REMOVE/SoCalCCCC.png
 	touch /etc/CYBERPATRIOT_DO_NOT_REMOVE/score
-fi
-
-#Check for python and python-tk, install if not installed
-if [[ 'grep indexD=/home/ csel.cfg' ]] ; then :; else
+	#Check for python and python-tk, install if not installed
 	apt-get install python python-tk -y
 	echo 'Python and python-tk is installed.'
+	#Launch the configurator
 	python configurator.py
+	exit 1
 fi
 
 #Fire csel to create the initial Score Report
