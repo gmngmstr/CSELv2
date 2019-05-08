@@ -71,4 +71,3 @@ The settings are saved in the csel.txt file
 - Add install updates frequency option
 - Update all of the explanations
 - Make Readme generator and setting setter (Maybe)
-- Make 'Write to Config' also run install.sh and any other scripts needed
