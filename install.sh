@@ -26,6 +26,13 @@ then
 	touch /etc/CYBERPATRIOT_DO_NOT_REMOVE/score
 fi
 
+#Check for python and python-tk, install if not installed
+if [[ 'grep indexD=/home/ csel.cfg' ]] ; then :; else
+	apt-get install python python-tk -y
+	echo 'Python and python-tk is installed.'
+	python configurator.py
+fi
+
 #Fire csel to create the initial Score Report
 echo -e 'DONE\nFiring csel for the first time...'
 /usr/local/bin/csel_SCORING_ENGINE_DO_NOT_TOUCH

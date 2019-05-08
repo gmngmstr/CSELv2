@@ -3,7 +3,7 @@
 - Modified crontab entry
 - Added CCC and SoCalCCCC logos
 - Added a line to create a linked file from the /usr/local/bin/ to the desktop for the scoring report
-- Removed installer for python an python-tk and moved them to an initiate.sh and added a line to launch the configurator.py
+- Moved installer for python and python-tk into an if statement and added a line to launch the configurator.py
 - Added the creation of a link on the desktop pointing to the scoring report in the same location as the scoring engine
 
 ## List of modifications to configurator.py
