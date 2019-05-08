@@ -54,8 +54,8 @@ CSEL can be run with "silent misses" which simulates a CyberPatriot round where 
 ## How to install without git
 1. To install the scoring engine extrct the folder to the desktop of the linux image
 2. In a terminal cd to the folder and type sudo `sudo ./install.sh`
-	This will install any missing programs needed to run the configurator and start the configurator
-	**Note** only run `./install.sh` once to install the missing programs. The configurator will automatically run it when you click `Write to Config`.
+	This will install any missing programs needed to run the configurator and start the configurator. 
+**Note:** only run `./install.sh` once to install the missing programs. The configurator will automatically run it when you click `Write to Config`.
 3. The settings can be saved and loaded using the respective buttons
 4. To edit the configuration of the scoring engine type `sudo python configurator.py` in the terminal
 	This will launch the GUI for configuring the scoring settings
