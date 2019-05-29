@@ -40,6 +40,8 @@
 - Modified variables to save the scoring report to the same location a the scoring engine to remove ghosting on the desktop
 - Made 'Write to Config' also run install.sh
 - Changed index to the location of the scoring engine and indexD to the location of the Desktop
+- Added an option to auto fill Desktop location and altered the manual input to only take user name
+- Added update period checker option
 
 ## List of modifications to payload
 - Fixed score totaler
@@ -60,6 +62,7 @@
 - Added notifications for gaining and loosing points
 - Added the creation of a link on the desktop pointing to the scoring report in the same location as the scoring engine
 - Added the installer for ssh when the sshd_config does not exists
+- Added update period checker option
 
 ## TODO
 - Add install updates frequency option

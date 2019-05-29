@@ -68,6 +68,7 @@ v210 = Vuln("maxLoginTries","0","0","","","","","","Value of max login retries t
 v211 = Vuln("checkPassLength","0","0","","","","","","Value min pw length is 10 (pam.d/common-password)")
 v212 = Vuln("checkPassHist","0","0","","","","","","Value of passwords to remember is 5 (pam.d/common-password)")
 v213 = Vuln("checkPassCompx","0","0","","","","","","Has password complexity been implemented? (pam.d/common-password)")
+v214 = Vuln("updateCheckPeriod","0","0","","","","","","Has the update check period been set to daily? (apt/apt.conf.d/10periodic)")
 v301 = Vuln("goodUser","0","0","","","","","(Users)","Lose points for removing this user (use negative number) (Can take multiple entries)")
 v302 = Vuln("badUser","0","0","","","","","(Users)","Remove these users to score (Can take multiple entries)")
 v303 = Vuln("newUser","0","0","","","","","(Users)","This user must be created (Can take multiple entries)")
@@ -89,7 +90,7 @@ v502 = VulnCust("fileContainsText2","0","0","","","","","","Custom option for re
 v503 = VulnCust("fileNoLongerContains1","0","0","","","","","","Custom option for requiring a word or phrase to be removed from a file.(Spaces will not be counted as separate entries)")
 v504 = VulnCust("fileNoLongerContains2","0","0","","","","","","Custom option for requiring a word or phrase to be removed from a file.(Spaces will not be counted as separate entries)")
 
-vulns = [v001,v201,v202,v203,v204,v205,v206,v207,v208,v209,v210,v211,v212,v213,v301,v302,v303,v304,v305,v306,v307,v308,v309,v310,v312,v313,v314,v401,v402,v501,v502,v503,v504]
+vulns = [v001,v201,v202,v203,v204,v205,v206,v207,v208,v209,v210,v211,v212,v213,v214,v301,v302,v303,v304,v305,v306,v307,v308,v309,v310,v312,v313,v314,v401,v402,v501,v502,v503,v504]
 
 def writeToSave(name,points,enabled,locationText,keywords,keywordsExtra):
 	f = open('csel.txt','a')
@@ -220,6 +221,14 @@ def saveConfig():
 	global vulns
 	global pointVal
 	global keyWords
+	if userLoc.get() == 1:
+		cwd = os.getcwd()
+		cwd = cwd.replace("CSEL-master", "")
+		usrDsktp.set(cwd)
+	if "/Desktop/" not in usrDsktp.get():
+		cwd = usrDsktp.get()
+		cwd = "/home/"+cwd+"/Desktop/"
+		usrDsktp.set(cwd)
 	location.config(text=usrDsktp.get())
 	f = open('csel.txt','w+')
 	f.write('Desktop='+usrDsktp.get()+'\n')
@@ -381,6 +390,7 @@ cb210 = IntVar()
 cb211 = IntVar()
 cb212 = IntVar()
 cb213 = IntVar()
+cb214 = IntVar()
 cb301 = IntVar()
 cb302 = IntVar()
 cb303 = IntVar()
@@ -401,7 +411,7 @@ cb501 = IntVar()
 cb502 = IntVar()
 cb503 = IntVar()
 cb504 = IntVar()
-checkBoxes = [cb001,cb201,cb202,cb203,cb204,cb205,cb206,cb207,cb208,cb209,cb210,cb211,cb212,cb213,cb301,cb302,cb303,cb304,cb305,cb306,cb307,cb308,cb309,cb310,cb312,cb313,cb314,cb401,cb402,cb501,cb502,cb503,cb504]
+checkBoxes = [cb001,cb201,cb202,cb203,cb204,cb205,cb206,cb207,cb208,cb209,cb210,cb211,cb212,cb213,cb214,cb301,cb302,cb303,cb304,cb305,cb306,cb307,cb308,cb309,cb310,cb312,cb313,cb314,cb401,cb402,cb501,cb502,cb503,cb504]
 
 #Point values for each item 30
 pts001 = IntVar()
@@ -418,6 +428,7 @@ pts210 = IntVar()
 pts211 = IntVar()
 pts212 = IntVar()
 pts213 = IntVar()
+pts214 = IntVar()
 pts301 = IntVar()
 pts302 = IntVar()
 pts303 = IntVar()
@@ -438,7 +449,7 @@ pts501 = IntVar()
 pts502 = IntVar()
 pts503 = IntVar()
 pts504 = IntVar()
-pointVal = [pts001,pts201,pts202,pts203,pts204,pts205,pts206,pts207,pts208,pts209,pts210,pts211,pts212,pts213,pts301,pts302,pts303,pts304,pts305,pts306,pts307,pts308,pts309,pts310,pts312,pts313,pts314,pts401,pts402,pts501,pts502,pts503,pts504]
+pointVal = [pts001,pts201,pts202,pts203,pts204,pts205,pts206,pts207,pts208,pts209,pts210,pts211,pts212,pts213,pts214,pts301,pts302,pts303,pts304,pts305,pts306,pts307,pts308,pts309,pts310,pts312,pts313,pts314,pts401,pts402,pts501,pts502,pts503,pts504]
 
 #These are for the location that some of the items take 30
 lo001 = StringVar()
@@ -455,6 +466,7 @@ lo210 = StringVar()
 lo211 = StringVar()
 lo212 = StringVar()
 lo213 = StringVar()
+lo214 = StringVar()
 lo301 = StringVar()
 lo302 = StringVar()
 lo303 = StringVar()
@@ -475,7 +487,7 @@ lo501 = StringVar()
 lo502 = StringVar()
 lo503 = StringVar()
 lo504 = StringVar()
-locationText = [lo001,lo201,lo202,lo203,lo204,lo205,lo206,lo207,lo208,lo209,lo210,lo211,lo212,lo213,lo301,lo302,lo303,lo304,lo305,lo306,lo307,lo308,lo309,lo310,lo312,lo313,lo314,lo401,lo402,lo501,lo502,lo503,lo504]
+locationText = [lo001,lo201,lo202,lo203,lo204,lo205,lo206,lo207,lo208,lo209,lo210,lo211,lo212,lo213,lo214,lo301,lo302,lo303,lo304,lo305,lo306,lo307,lo308,lo309,lo310,lo312,lo313,lo314,lo401,lo402,lo501,lo502,lo503,lo504]
 
 #These are for the keywords that some of the items take (goodUser, badProgram, etc) 30
 kw001 = StringVar()
@@ -492,6 +504,7 @@ kw210 = StringVar()
 kw211 = StringVar()
 kw212 = StringVar()
 kw213 = StringVar()
+kw214 = StringVar()
 kw301 = StringVar()
 kw302 = StringVar()
 kw303 = StringVar()
@@ -512,7 +525,7 @@ kw501 = StringVar()
 kw502 = StringVar()
 kw503 = StringVar()
 kw504 = StringVar()
-keyWords = [kw001,kw201,kw202,kw203,kw204,kw205,kw206,kw207,kw208,kw209,kw210,kw211,kw212,kw213,kw301,kw302,kw303,kw304,kw305,kw306,kw307,kw308,kw309,kw310,kw312,kw313,kw314,kw401,kw402,kw501,kw502,kw503,kw504]
+keyWords = [kw001,kw201,kw202,kw203,kw204,kw205,kw206,kw207,kw208,kw209,kw210,kw211,kw212,kw213,kw214,kw301,kw302,kw303,kw304,kw305,kw306,kw307,kw308,kw309,kw310,kw312,kw313,kw314,kw401,kw402,kw501,kw502,kw503,kw504]
 
 #These are for the extra keywords that some of the items take 30
 kwe001 = StringVar()
@@ -529,6 +542,7 @@ kwe210 = StringVar()
 kwe211 = StringVar()
 kwe212 = StringVar()
 kwe213 = StringVar()
+kwe214 = StringVar()
 kwe301 = StringVar()
 kwe302 = StringVar()
 kwe303 = StringVar()
@@ -549,7 +563,7 @@ kwe501 = StringVar()
 kwe502 = StringVar()
 kwe503 = StringVar()
 kwe504 = StringVar()
-keyWordsExtra = [kwe001,kwe201,kwe202,kwe203,kwe204,kwe205,kwe206,kwe207,kwe208,kwe209,kwe210,kwe211,kwe212,kwe213,kwe301,kwe302,kwe303,kwe304,kwe305,kwe306,kwe307,kwe308,kwe309,kwe310,kwe312,kwe313,kwe314,kwe401,kwe402,kwe501,kwe502,kwe503,kwe504]
+keyWordsExtra = [kwe001,kwe201,kwe202,kwe203,kwe204,kwe205,kwe206,kwe207,kwe208,kwe209,kwe210,kwe211,kwe212,kwe213,kwe214,kwe301,kwe302,kwe303,kwe304,kwe305,kwe306,kwe307,kwe308,kwe309,kwe310,kwe312,kwe313,kwe314,kwe401,kwe402,kwe501,kwe502,kwe503,kwe504]
 
 #Initialize tally variables
 tallyScore = IntVar()
@@ -605,14 +619,16 @@ frame5.columnconfigure(2, weight=1)
 #Making some boxes
 #Frame0
 scoreLoc = "LOCATION MISSING!"
+userLoc = IntVar()
 userDesktop = Entry(frame,textvariable=usrDsktp)
 location = Label(frame,text=scoreLoc)
-userDesktopLabel = Label(frame,text="Path to Score Report and Forensics\nEx: /home/fred/Desktop/\nDon't forget the trailing '/'")
+userDesktopLabel = Label(frame,text="Enter the user name where\nyou want the information to goto.")
 saveButton = Button(frame,text='Save',command=saveConfig)
 loadButton = Button(frame,text='Load',command=loadSave)
 checkbox001 = Checkbutton(frame,text=v001.name,variable=cb001)
 label001 = Label(frame,text=v001.tip)
 submit = Button(frame,text='Write to Config',command=submitCallback)
+desktopSelect = Checkbutton(frame,text="Check if this configurator is on the Desktop of the main account.",variable=userLoc)
 #Frame1
 fqHead1 = Label(frame1,text="Create?",font=('Verdana',10,'bold'))
 fqHead2 = Label(frame1,text="Points",font=('Verdana',10,'bold'))
@@ -670,6 +686,9 @@ label212 = Label(frame2,text=v212.tip)
 checkbox213 = Checkbutton(frame2,text=v213.name,variable=cb213)
 points213 = Entry(frame2,width=5,textvariable=pts213)
 label213 = Label(frame2,text=v213.tip)
+checkbox214 = Checkbutton(frame2,text=v214.name,variable=cb214)
+points214 = Entry(frame2,width=5,textvariable=pts214)
+label214 = Label(frame2,text=v214.tip)
 #Gettting into the fancier vulnerabilities now
 #Frame3
 head4 = Label(frame3,text="Score?",font=('Verdana',10,'bold'))
@@ -800,15 +819,16 @@ label504 = Label(frame5,text=v504.tip)
 
 #Pack it up...errr GRID it up!
 #Frame0
-location.grid(row=0,column=1)
-userDesktop.grid(row=0,column=2)
-userDesktopLabel.grid(row=0,column=3,sticky=W)
-saveButton.grid(row=0,column=4,sticky=W)
-loadButton.grid(row=1,column=4,sticky=W)
-checkbox001.grid(row=1,column=1,sticky=W)
-label001.grid(row=1,column=2,sticky=W)
-ftTally.grid(row=2,column=1,sticky=W)
-submit.grid(row=2,column=4)
+desktopSelect.grid(row=0,column=2)
+location.grid(row=1,column=1)
+userDesktop.grid(row=1,column=2)
+userDesktopLabel.grid(row=1,column=3,sticky=W)
+saveButton.grid(row=1,column=4,sticky=W)
+loadButton.grid(row=2,column=4,sticky=W)
+checkbox001.grid(row=2,column=1,sticky=W)
+label001.grid(row=2,column=2,sticky=W)
+ftTally.grid(row=3,column=1,sticky=W)
+submit.grid(row=3,column=4)
 #Frame1
 fqHead1.grid(row=0,column=1)
 fqHead2.grid(row=0,column=2)
@@ -865,6 +885,9 @@ label212.grid(row=12,column=3,sticky=W)
 checkbox213.grid(row=13,column=1,sticky=W)
 points213.grid(row=13,column=2)
 label213.grid(row=13,column=3,sticky=W)
+checkbox214.grid(row=14,column=1,sticky=W)
+points214.grid(row=14,column=2)
+label214.grid(row=14,column=3,sticky=W)
 #Frame3
 head4.grid(row=0,column=1)
 head5.grid(row=0,column=2)
@@ -995,11 +1018,11 @@ label504.grid(row=4,column=6,sticky=W)
 #Frame positioning
 #Each item added or removed is worth 20
 canvas.create_window(0, 0, anchor=NW, window=frame)
-canvas.create_window(0, 120, anchor=NW, window=frame1)
-canvas.create_window(0, 200, anchor=NW, window=frame2)
-canvas.create_window(0, 500, anchor=NW, window=frame3)
-canvas.create_window(0, 820, anchor=NW, window=frame4)
-canvas.create_window(0, 900, anchor=NW, window=frame5)
+canvas.create_window(0, 140, anchor=NW, window=frame1)
+canvas.create_window(0, 220, anchor=NW, window=frame2)
+canvas.create_window(0, 540, anchor=NW, window=frame3)
+canvas.create_window(0, 860, anchor=NW, window=frame4)
+canvas.create_window(0, 940, anchor=NW, window=frame5)
 
 frame.update_idletasks()
 frame1.update_idletasks()

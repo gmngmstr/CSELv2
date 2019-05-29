@@ -261,6 +261,16 @@ checkPassCompx(){ #Check /etc/pam.d/common-password for password complexity
 	fi
 }
 
+updateCheckPeriod(){ #Check /etc/pam.d/common-password for password complexity
+	if [ -z "$updateCheckPeriod" ]; then :; else addPosPoints $updateCheckPeriodValue
+		if [[ $(cat /etc/apt/apt.conf.d/10periodic | grep 'APT::Periodic::Update-Package-Lists "1";') ]] ; then
+			recordHit "Update check period is set to 'daily'." $updateCheckPeriodValue
+		else
+			recordMiss 'Update Period'
+		fi
+	fi
+}
+
 #Frame3
 goodUser(){	#Penalize for deleting good users
 	if [ -z "$goodUser" ]; then :; else 
