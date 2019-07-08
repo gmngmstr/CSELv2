@@ -7,7 +7,7 @@ sed -i "s/%KERNEL%/"`uname -r`"/g" /usr/local/bin/csel_SCORING_ENGINE_DO_NOT_TOU
 sed -i "s/%INSTALLDATE%/"`date +%s`"/g" /usr/local/bin/csel_SCORING_ENGINE_DO_NOT_TOUCH
 echo -e 'DONE\nInstalling csel into /usr/local/bin...'
 chmod 777 /usr/local/bin/csel_SCORING_ENGINE_DO_NOT_TOUCH #Make it executable
-
+cp ./uniqueID.py /usr/local/bin/uniqueID.py
 #Check for crontab entry, add it if it doesn't exist
 echo -e 'DONE\nAdding crontab entry...'
 if [[ $(crontab -l -u root | grep csel) ]] ; then :; else
@@ -35,7 +35,7 @@ fi
 
 #Fire csel to create the initial Score Report
 echo -e 'DONE\nFiring csel for the first time...'
-/usr/local/bin/csel_SCORING_ENGINE_DO_NOT_TOUCH
+/usr/local/bin/csel_SCORING_ENGINE_DO_NOT_TOUCH 
 
 #Finish up
 scoreReportLoc=$( grep -Po '(?<=indexD=\().*?(?=\))' csel.cfg )

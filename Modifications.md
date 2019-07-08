@@ -42,6 +42,19 @@
 - Changed index to the location of the scoring engine and indexD to the location of the Desktop
 - Added an option to auto fill Desktop location and altered the manual input to only take user name
 - Added update period checker option
+- Removed about 90% of the variables and converted them all to a dynamic system
+- Rearranged def for easier read
+- Added addToFrame2-5 and addOptionMenu, addTextBox, and addTextLable for dynamicaly adding options to chose from
+- Added positionFrames and setEntry def
+- Reconfigured the tally def to acomdate new system
+- Reconfigured the saveConfig for new system and removed writeToSave
+- Reconfigured loadSave for new system
+- Reconfigured vuln class to take fewer entries for easier reading
+- Removed load button and auto loaded config on launch
+- Moved grid assigment to reduce variable count and line count
+- Added addAdmin option
+- Added updateAutoInstall option
+- Added a score report generator
 
 ## List of modifications to payload
 - Fixed score totaler
@@ -63,10 +76,13 @@
 - Added the creation of a link on the desktop pointing to the scoring report in the same location as the scoring engine
 - Added the installer for ssh when the sshd_config does not exists
 - Added update period checker option
+- Modified how points are calculated and added
+- Added adAdmin option
+- Adjusted updateAutoInstall option
+- Added pause till uniqueId is finished
+- Added relaunch of uniqueID if it is closed without finishing
 
 ## TODO
-- Add install updates frequency option
-
 - Retest everything
 
 - Make Readme generator and setting setter

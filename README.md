@@ -38,6 +38,7 @@ CSEL is still a baby and it's rough around the edges, but so far it can score th
 - Adding or uncommenting lines from config files
 - Deleting or commenting lines from config files
 - Install update period
+- Install updates automatically
 
 CSEL can also take away points for:
 - Deleting "good" users
