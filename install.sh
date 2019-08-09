@@ -1,5 +1,8 @@
 #!/bin/bash
-
+if [ "$EUID" -ne 0 ] ;  then 
+	echo "installer must be run as root"
+	exit
+fi
 #Merge the config with the code, output it to csel file
 echo 'Merging csel.cfg with payload...'
 cat csel.cfg payload > /usr/local/bin/csel_SCORING_ENGINE_DO_NOT_TOUCH
@@ -8,10 +11,17 @@ sed -i "s/%INSTALLDATE%/"`date +%s`"/g" /usr/local/bin/csel_SCORING_ENGINE_DO_NO
 echo -e 'DONE\nInstalling csel into /usr/local/bin...'
 chmod 777 /usr/local/bin/csel_SCORING_ENGINE_DO_NOT_TOUCH #Make it executable
 cp ./uniqueID.py /usr/local/bin/uniqueID.py
+if [[ $( grep 'FTPServer' csel.cfg ) ]] ;  then
+	cp ./csel_SCORING_REPORT_FTP_DO_NO_TOUCH.sh /usr/local/bin/csel_SCORING_REPORT_FTP_DO_NO_TOUCH
+	chmod 777 /usr/local/bin/csel_SCORING_REPORT_FTP_DO_NO_TOUCH #Make it executable
+	if [[ $(crontab -l -u root | grep FTP) ]] ; then :; else
+		(crontab -l -u root ; echo "* * * * * /usr/local/bin/csel_SCORING_REPORT_FTP_DO_NO_TOUCH") | crontab -
+	fi
+fi
 #Check for crontab entry, add it if it doesn't exist
 echo -e 'DONE\nAdding crontab entry...'
-if [[ $(crontab -l -u root | grep csel) ]] ; then :; else
-	(crontab -l -u root ; echo "* * * * * /usr/local/bin/csel_SCORING_ENGINE_DO_NOT_TOUCH")| crontab -
+if [[ $(crontab -l -u root | grep ENGINE) ]] ; then :; else
+	(crontab -l -u root ; echo "* * * * * /usr/local/bin/csel_SCORING_ENGINE_DO_NOT_TOUCH") | crontab -
 fi
 
 #Check for CYBER folder, create if it doesn't exist

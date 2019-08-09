@@ -43,7 +43,7 @@ CSEL is still a baby and it's rough around the edges, but so far it can score th
 CSEL can also take away points for:
 - Deleting "good" users
 
-CSEL can be run with "silent misses" which simulates a CyberPatriot round where you have no idea where the points are until you earn them. It can also be run with the silent misses turned off which is helpful when you are debugging or when you have very inexperienced students who might benefit from the help. This mode gives you a general idea where the points are missing.
+CSEL can be run with "silent misses" which simulates a CyberPatriot round where you have no idea where the points are until you earn them. It can also be run with the silent misses turned off which is helpful when you are debugging or when you have very inexperienced students who might benefit from the help. This mode gives you a general idea where the points are missing. CSEL can also create a scoreboard report that can be sent to an FTP server and manaipulated however you please.
 
 ## How to install using git
 1. Set up your image and put your vulnerabilities in place.

@@ -1,3 +1,8 @@
+##List of general modifications
+- Created uniqueID.py to ask for unique IDs
+- Created csel_SCORING_REPORT_FTP_DO_NOT_TOUCH.sh to send scoring report to an ftp server ( reconmend FileZilla to only allow write )
+- Added an input check to uniqueID.py
+
 ## List of modifications to install.sh
 - Added python and python tk installer
 - Modified crontab entry
@@ -5,6 +10,9 @@
 - Added a line to create a linked file from the /usr/local/bin/ to the desktop for the scoring report
 - Moved installer for python and python-tk into an if statement and added a line to launch the configurator.py
 - Added the creation of a link on the desktop pointing to the scoring report in the same location as the scoring engine
+- Added a copyer for the csel_SCORING_REPORT_FTP_DO_NOT_TOUCH.sh to the /usr/local/bin directory
+- Added a crontab entry for /usr/local/bin/csel_SCORING_REPORT_FTP_DO_NOT_TOUCH
+- Created checks for FTPServer option
 
 ## List of modifications to configurator.py
 - Added a full save function
@@ -55,6 +63,10 @@
 - Added addAdmin option
 - Added updateAutoInstall option
 - Added a score report generator
+- Added a FTP option
+- Added function to create a new window asking for server info
+- Added a save and load function for the ftp server
+- Fixed the save and load function for the silentMiss option
 
 ## List of modifications to payload
 - Fixed score totaler
@@ -81,9 +93,13 @@
 - Adjusted updateAutoInstall option
 - Added pause till uniqueId is finished
 - Added relaunch of uniqueID if it is closed without finishing
+- Fixed point totaler
+- Created checks for FTPServer option
 
 ## TODO
 - Retest everything
+- Create a Build file
 
+- Add option to disable scoreboard creation and ftp transfer
 - Make Readme generator and setting setter
 - Update all of the explanations

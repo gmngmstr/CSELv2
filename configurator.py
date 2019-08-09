@@ -40,8 +40,9 @@ class AutoScrollbar(Scrollbar):
 
 fq01 = ForenQuest("Question1.txt","Here is my question...","myanswer","0","0")
 fq02 = ForenQuest("Question2.txt","Here is my question...","myanswer","0","0")
-v001 = Vuln("silentMiss","","Check this box to hide missed items\n(Similar to competition)",False)
-v002 = Vuln("<Select One>","","<Description>",False)
+v001 = Vuln("silentMiss","","Check this box to hide missed items (Similar to competition)",False)
+v002 = Vuln("FTPServer","","Check this box to enable an FTP server to save the scores (Similar to competition)",False)
+v003 = Vuln("<Select One>","","<Description>",False)
 v201 = Vuln("disableGuest","","Is the guest disabled in lightdm?",False)
 v202 = Vuln("disableAutoLogin","","Is there an auto logged in user in lightdm?",False)
 v203 = Vuln("disableUserGreeter","","Disable the user greeter in lightdm",False)
@@ -61,17 +62,18 @@ v301 = Vuln("goodUser","(Users)","Lose points for removing this user (use negati
 v302 = Vuln("badUser","(Users)","Remove these users to score (Can take multiple entries)",False)
 v303 = Vuln("newUser","(Users)","This user must be created (Can take multiple entries)",False)
 v304 = Vuln("changePassword","(Users)","User who must change password (Can take multiple entries)(Set the desired passwords before submitting)",False)
-v305 = Vuln("addAdmin","(Users)","Add these users to the sudo group (Can take multiple entries)",False)
-v306 = Vuln("removeAdmin","(Users)","Remove these users from the sudo group (Can take multiple entries)",False)
-v307 = Vuln("groupExists","(Groups)","This group must be created (Can take multiple entries)",False)
-v308 = Vuln("goodProgram","(Programs)","Score points by installing these programs (Can take multiple entries)",False)
-v309 = Vuln("badProgram","(Programs)","Score points by removing these programs (Can take multiple entries)",False)
-v310 = Vuln("GoodService","(Services)","Service that needs to be started (Can take multiple entries)",False)
-v311 = Vuln("badService","(Services)","Service that needs to be stopped (Can take multiple entries)",False)
-v312 = Vuln("badFile","(Location)","Score points for deleting this file (Can take multiple entries)",False)
-v313 = Vuln("secureSudoers","(Keywords)","Words to be removed from /etc/sudoers file (Can take multiple entries)",False)
-v314 = Vuln("checkHosts","(Keywords)","Check /etc/hosts for a specific string (Can take multiple entries)",False)
-v315 = Vuln("checkStartup","(Keywords)","Check rc.local for a specific string (Can take multiple entries)",False)
+v305 = Vuln("goodAdmin","(Users)","Add these users to the sudo group (Can take multiple entries)",False)
+v306 = Vuln("badAdmin","(Users)","Remove these users from the sudo group (Can take multiple entries)",False)
+v307 = Vuln("goodGroup","(Groups)","This group must be created (Can take multiple entries)",False)
+v308 = Vuln("badGroup","(Groups)","This group must be removed (Can take multiple entries)",False)
+v309 = Vuln("goodProgram","(Programs)","Score points by installing these programs (Can take multiple entries)",False)
+v310 = Vuln("badProgram","(Programs)","Score points by removing these programs (Can take multiple entries)",False)
+v311 = Vuln("goodService","(Services)","Service that needs to be started (Can take multiple entries)",False)
+v312 = Vuln("badService","(Services)","Service that needs to be stopped (Can take multiple entries)",False)
+v313 = Vuln("badFile","(Location)","Score points for deleting this file (Can take multiple entries)",False)
+v314 = Vuln("secureSudoers","(Keywords)","Words to be removed from /etc/sudoers file (Can take multiple entries)",False)
+v315 = Vuln("checkHosts","(Keywords)","Check /etc/hosts for a specific string (Can take multiple entries)",False)
+v316 = Vuln("checkStartup","(Keywords)","Check rc.local for a specific string (Can take multiple entries)",False)
 v401 = Vuln("badCron","(User)(Keyword)","Check the root crontab for a specific string (Can take multiple entries)(If using multiple users be sure to include a keyword for each)",False)
 v402 = Vuln("userInGroup","(users)(Group)","Users that need to be added to a group (Can take multiple entries)(If using multiple users be sure to include a group for each)",False)
 v501 = Vuln("fileContainsText1","","Custom option for requiring a word or phrase to be added to a file.(Spaces will not be counted as separate entries)",False)
@@ -79,16 +81,15 @@ v502 = Vuln("fileContainsText2","","Custom option for requiring a word or phrase
 v503 = Vuln("fileNoLongerContains1","","Custom option for requiring a word or phrase to be removed from a file.(Spaces will not be counted as separate entries)",False)
 v504 = Vuln("fileNoLongerContains2","","Custom option for requiring a word or phrase to be removed from a file.(Spaces will not be counted as separate entries)",False)
 
-vulns = [v001,v002,v201,v202,v203,v204,v205,v206,v207,v208,v209,v210,v211,v212,v213,v214,v215,v301,v302,v303,v304,v305,v306,v307,v308,v309,v310,v311,v312,v313,v314,v315,v401,v402,v501,v502,v503,v504]
+vulns = [v001,v002,v201,v202,v203,v204,v205,v206,v207,v208,v209,v210,v211,v212,v213,v214,v215,v301,v302,v303,v304,v305,v306,v307,v308,v309,v310,v311,v312,v313,v314,v315,v316,v401,v402,v501,v502,v503,v504]
 dontCheck = [ "silentMiss","<Select One>","Remove" ]
 vulnNames2 = [ "disableGuest","disableAutoLogin","disableUserGreeter","disableSshRootLogin","checkFirewall","checkKernel","avUpdated","minPassAge","maxPassAge","maxLoginTries","checkPassHist","checkPassCompx","updateCheckPeriod","updateAutoInstall","Remove" ]
-vulnNames3 = [ "goodUser","badUser","newUser","changePassword","addAdmin","removeAdmin","groupExists","goodProgram","badProgram","GoodService","badService","badFile","secureSudoers","checkHosts","checkStartup","Remove" ]
+vulnNames3 = [ "goodUser","badUser","newUser","changePassword","goodAdmin","badAdmin","goodGroup","badGroup","goodProgram","badProgram","goodService","badService","badFile","secureSudoers","checkHosts","checkStartup","Remove" ]
 vulnNames4 = [ "badCron","userInGroup","Remove" ]
 vulnNames5 = [ "fileContainsText1","fileNoLongerContains1","Remove" ]
 
 
 def addOptionMenu(loc, bRow, bColumn, list, optSet):
-	global all_entries
 	eSave = len(all_entries)
 	entry_select.append('')
 	entry_select[eSave] = StringVar()
@@ -99,7 +100,6 @@ def addOptionMenu(loc, bRow, bColumn, list, optSet):
 
 def addTextBox(loc, bRow, bColumn, size):
 	global entry_textBox_count
-	global entry_textBox
 	entry_textBox_count = entry_textBox_count + 1
 	entry_textBox.append('')
 	entry_textBox[entry_textBox_count] = StringVar()
@@ -108,7 +108,6 @@ def addTextBox(loc, bRow, bColumn, size):
 
 def addTextLable(loc, des, bRow, bColumn):
 	global entry_lable_count
-	global entry_lable
 	entry_lable_count = entry_lable_count + 1
 	entry_lable.append('')
 	entry_lable[entry_lable_count] = StringVar()
@@ -214,9 +213,6 @@ def addToFrame5(optSet):
 	positionFrames()
 
 def setEntry(event):
-	global all_entries
-	global errorFree
-	global dupFree
 	vulnNames2Rem = []
 	vulnNames2RemD = []
 	for number, (ent1, ent2, ent3, ent4, ent5, ent6, ent7, frame) in enumerate(all_entries):
@@ -242,11 +238,6 @@ def setEntry(event):
 			dupFree = False
 
 def positionFrames():
-	global all_entries
-	global entry_frame2_count
-	global entry_frame3_count
-	global entry_frame4_count
-	global entry_frame5_count
 	frame2_pos = 2
 	count2 = 1
 	frame3_pos = 3
@@ -395,10 +386,6 @@ def writeToConfig(name,points,keywords,keywordsExtra,message):
 
 def submitCallback():
     #We wanna use those fancy variable lists 
-	global vulns
-	global all_entries
-	global errorFree
-	global dupFree
 	if os.geteuid() != 0:
 		Mbox('Error', 'You need to be root to Write to Config. Please relaunch the confiturator with sudo.')
 		return
@@ -459,6 +446,10 @@ def submitCallback():
 		f = open('csel.cfg','w+')
 		configHeader="#!/bin/bash\n#This config file was generated by configurator.py\n\n"
 		f.write(configHeader)
+		if silentMode.get() == 1:
+			f.write('silentMiss=(y)\n')
+		if ftpMode.get() == 1:
+			f.write('FTPServer=(y)\n')
 		f.close()
 		createForQ()
 		save_entry = []
@@ -512,15 +503,15 @@ def submitCallback():
 		for vuln in vulns:
 			vuln.saved = False
 		f = open('csel.cfg','a')
-		configFooter="index=(/usr/local/bin/ScoreReport.html)\nindexD=("+usrDsktp.get()+")\n#These values will change during install\nimageScore=0\nposPoints=0\nrelease=\"\"\ninitialKernel=(%KERNEL%)\ninstallDate=(%INSTALLDATE%)\n"
+		configFooter="index=(/usr/local/bin/ScoreReport.html)\nindexD=("+usrDsktp.get()+")\nindexR=(/usr/local/bin)\n#These values will change during install\nimageScore=0\nposPoints=0\nrelease=\"\"\ninitialKernel=(%KERNEL%)\ninstallDate=(%INSTALLDATE%)\n"
 		f.write(configFooter)
 		f.close()
 		subprocess.Popen(['./install.sh'])
-		root.destroy()
+		exit()
+		
 	
 def saveConfig():
 	#We wanna use those fancy variable lists 
-	global vulns
 	if userLoc.get() == 1:
 		cwd = os.getcwd()
 		cwd = cwd.replace("CSEL-master", "")
@@ -532,8 +523,20 @@ def saveConfig():
 	scoreLoc.set(usrDsktp.get())
 	f = open('csel.txt','w+')
 	f.write('Desktop='+usrDsktp.get()+'\n')
+	if silentMode.get() ==1:
+		f.write('silentMiss=(y)\n')
+	if ftpMode.get() == 1:
+		f.write('FTPServer=(y)\n')
 	f.close()
 	saveForQ()
+	if ftpMode.get() == 1:
+		f = open('FTP.txt','w+')
+		line1 = 'serverName='+serverName.get()+'\n'
+		line2 = 'userName='+userName.get()+'\n'
+		line3 = 'password='+password.get()+'\n'
+		for line in (line1,line2,line3):
+			f.write(line)
+		f.close()
 	save_entry = []
 	buff_entry = []
 	f = open('csel.txt','a')
@@ -597,14 +600,19 @@ def saveConfig():
 	tally()
 	
 def loadSave():
-	global all_entries
-	with open('csel.txt') as f:
-		content = f.read().splitlines()
-	f.close()
+	content = []
+	if os.path.exists('csel.txt'):
+		with open('csel.txt') as f:
+			content = f.read().splitlines()
+		f.close()
 	for cont in content:
 		if 'Desktop=' in cont:
 			usrDsktp.set(cont.replace('Desktop=',''))
-			scoreLoc.set(cont.replace('Desktop=',''))
+		if 'silentMiss=(y)' in cont:
+			silentMode.set(1)
+		if 'FTPServer=(y)' in cont:
+			ftpMode.set(1)
+			getFTPInfo()
 		if 'forensicsAnswer1=(' in cont:
 			fqA1 = cont.replace('forensicsAnswer1=(','')
 			fqA1 = fqA1.replace(')','')
@@ -719,10 +727,7 @@ def loadSave():
 	tally()
 
 def tally():
-	global all_entries
 	#Set tally scores
-	global tallyScore
-	global tallyVuln
 	tallyScore = 0
 	tallyVuln = 0
 	for number, (ent1, ent2, ent3, ent4, ent5, ent6, ent7, frame) in enumerate(all_entries):
@@ -740,6 +745,29 @@ def tally():
 						tallyVuln = tallyVuln + 1
 						tallyScore = tallyScore + int(entry_textBox[ent2].get())
 	scoreTotal.set("Vulnerablilities: {0}\nTotal Points: {1}".format(str(tallyVuln),str(tallyScore)))
+
+def getFTPInfo():
+	if os.path.exists('FTP.txt'):
+		with open('FTP.txt') as f:
+			content = f.read().splitlines()
+		f.close()
+		serverName.set(content[0].replace('serverName=', ''))
+		userName.set(content[1].replace('userName=', ''))
+		password.set(content[2].replace('password=', ''))
+	if ftpMode.get() == 1:
+		servL.config(state='normal')
+		servE.config(state='normal')
+		userL.config(state='normal')
+		userE.config(state='normal')
+		passL.config(state='normal')
+		passE.config(state='normal')
+	else:
+		servL.config(state='disable')
+		servE.config(state='disable')
+		userL.config(state='disable')
+		userE.config(state='disable')
+		passL.config(state='disable')
+		passE.config(state='disable')
 
 # Global Variables Initiation
 all_entries = []
@@ -762,9 +790,14 @@ root = Tk()
 root.title('CSEL Setup Tool')
 userLoc = IntVar()
 usrDsktp = StringVar()
+silentMode = IntVar()
+ftpMode = IntVar()
+ftpFrames = ''
+serverName = StringVar()
+userName = StringVar()
+password = StringVar()
 scoreLoc = StringVar()
 scoreTotal = StringVar()
-scoreLoc.set("LOCATION MISSING!")
 scoreTotal.set("Vulnerablilities: 0\nTotal Points: 0")
 # Forensic Question stuff
 fqcb01 = IntVar()
@@ -810,16 +843,29 @@ frame4.grid(row=4, column=0, sticky=W)
 frame5 = Frame(canvas)
 frame5.grid(row=5, column=0, sticky=W)
 # Frame Interface
-Checkbutton(frame,text="Check if this configurator is on the Desktop of the main account.",variable=userLoc).grid(row=0,column=2,sticky=W,columnspan=2)
-Entry(frame,textvariable=usrDsktp).grid(row=1,column=2,sticky=W)
-Label(frame,textvariable=scoreLoc).grid(row=1,column=1,sticky=W)
-Label(frame,text="Enter the user name where\nyou want the information to goto.").grid(row=1,column=3,sticky=W)
-Button(frame,text='Save',command=saveConfig).grid(row=1,column=4,sticky=W)
-Checkbutton(frame,text=v001.name).grid(row=2,column=1,sticky=W)
-Label(frame,text=v001.tip).grid(row=2,column=2,sticky=W)
+Button(frame,text='Save',command=saveConfig).grid(row=0,column=1)
+Checkbutton(frame,text="Check if this configurator is on the Desktop of the main account.",variable=userLoc).grid(row=0,column=2,sticky=W,columnspan=4)
+Button(frame,text='Write to Config',command=submitCallback).grid(row=1,column=1)
+Entry(frame,textvariable=usrDsktp).grid(row=1,column=2,columnspan=3,sticky=EW)
+Label(frame,text="Enter the user name where\nyou want the information to goto.").grid(row=1,column=4,columnspan=2,sticky=W)
+Checkbutton(frame,text=v001.name,variable=silentMode).grid(row=2,column=1,sticky=W)
+Label(frame,text=v001.tip).grid(row=2,column=2,columnspan=5,sticky=W)
+Checkbutton(frame,text=v002.name,variable=ftpMode,command=getFTPInfo).grid(row=3,column=1,sticky=W)
+Label(frame,text=v002.tip).grid(row=3,column=2,columnspan=5,sticky=W)
+servL = Label(frame,text='Server Name/IP',state='disable')
+servL.grid(row=4,column=1,sticky=E)
+servE = Entry(frame,textvariable=serverName,state='disable')
+servE.grid(row=4,column=2,sticky=W)
+userL = Label(frame,text='User Name',state='disable')
+userL.grid(row=4,column=3,sticky=E)
+userE = Entry(frame,textvariable=userName,state='disable')
+userE.grid(row=4,column=4,sticky=W)
+passL = Label(frame,text='Password',state='disable')
+passL.grid(row=4,column=5,sticky=E)
+passE = Entry(frame,textvariable=password,state='disable')
+passE.grid(row=4,column=6,sticky=W)
 error = Label(frame,text='Please correct the errors\nbefore proceding',fg='red')
-Button(frame,text='Write to Config',command=submitCallback).grid(row=2,column=4,sticky=W)
-Label(frame,textvariable=scoreTotal,font=('Verdana',10,'bold')).grid(row=3,column=1,sticky=W)
+Label(frame,textvariable=scoreTotal,font=('Verdana',10,'bold')).grid(row=5,column=1,sticky=W)
 # Frame1 Interface
 Label(frame1,text="Create?",font=('Verdana',10,'bold')).grid(row=0,column=1)
 Label(frame1,text="Points",font=('Verdana',10,'bold')).grid(row=0,column=2)

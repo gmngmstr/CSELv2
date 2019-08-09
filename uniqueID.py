@@ -1,16 +1,29 @@
 from Tkinter import *
 
 def retrieve():
-	f = open('/usr/local/bin/uniqueId','w+')
-	line1 = 'TeamName: ' + str(teamID.get()) + '\n'
-	line2 = 'StudentName: ' + str(studentID.get()) + '\n'
-	line3 = 'SchoolName: ' + str(schoolID.get()) + '\n'
-	line4 = 'TeacherName: ' + str(teacherID.get()) + '\n'
-	line5 = 'Grade: ' + str(grade.get())
-	for line in (line1, line2, line3, line4, line5):
-		f.write(line)
-	f.close()
-	root.destroy()
+	if ( str(teamID.get()) != '' and str(studentID.get()) != '' and str(schoolID.get()) != '' and str(teacherID.get()) != '' and str(grade.get()) != '' ):
+		f = open('/usr/local/bin/uniqueId','w+')
+		line1 = 'Team Name,' + str(teamID.get()) + ',\n'
+		line2 = 'Student Name,' + str(studentID.get()) + ',\n'
+		line3 = 'School Name,' + str(schoolID.get()) + ',\n'
+		line4 = 'Teacher Name,' + str(teacherID.get()) + ',\n'
+		line5 = 'Grade,' + str(grade.get()) + ',\n'
+		for line in (line1, line2, line3, line4, line5):
+			f.write(line)
+		f.close()
+		g = open('/usr/local/bin/name','w+')
+		line = str(teamID.get()).replace(' ', '') + str(studentID.get()).replace(' ', '') + 'ScoreReport.csv'
+		g.write(line)
+		g.close()
+		root.destroy()
+	else:
+		warn = Tk()
+		warn.title('Error')
+		center(warn)
+		warnF = Frame(warn)
+		warnF.pack()
+		Label(warnF,text='Please fill in all of the boxes with the corect information for accurate scoring.',font=('Verdana',10,'bold')).pack()
+		Button(warnF,text='OK',command=lambda: warn.destroy()).pack()
 
 def center(master):
 		screen_w = master.winfo_screenwidth()
