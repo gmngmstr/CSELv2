@@ -1,5 +1,5 @@
 #!/bin/sh
-if [[ ! -f "/usr/local/bin/name" ]]; then
+if [ ! -f "/usr/local/bin/name" ]; then
 	exit
 fi
 HOST='#SERVER#'

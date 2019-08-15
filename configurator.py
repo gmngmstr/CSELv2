@@ -1,4 +1,4 @@
-import os, sys, subprocess, tkMessageBox
+import os, sys, subprocess, tkMessageBox, time
 from stat import *
 from Tkinter import *
 
@@ -507,6 +507,7 @@ def submitCallback():
 		f.write(configFooter)
 		f.close()
 		subprocess.Popen(['./install.sh'])
+		time.sleep(2)
 		exit()
 		
 	

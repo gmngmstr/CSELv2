@@ -14,6 +14,7 @@ cp ./uniqueID.py /usr/local/bin/uniqueID.py
 if [[ $( grep 'FTPServer' csel.cfg ) ]] ;  then
 	cp ./csel_SCORING_REPORT_FTP_DO_NO_TOUCH.sh /usr/local/bin/csel_SCORING_REPORT_FTP_DO_NO_TOUCH
 	chmod 777 /usr/local/bin/csel_SCORING_REPORT_FTP_DO_NO_TOUCH #Make it executable
+	cp ./FTP.txt /usr/local/bin/FTP.txt
 	if [[ $(crontab -l -u root | grep FTP) ]] ; then :; else
 		(crontab -l -u root ; echo "* * * * * /usr/local/bin/csel_SCORING_REPORT_FTP_DO_NO_TOUCH") | crontab -
 	fi

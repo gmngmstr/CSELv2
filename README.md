@@ -70,6 +70,6 @@ The settings are saved in the csel.txt file
 **Important Note**: Your students _will_ be able to see the vulnerabilities if you leave the CSEL folder behind or if they cat the executable file that is created in /usr/local/bin/. I tell my students where the file is and that they should stay away from it. It is practice, after all.
 
 ## Known issues and planned updates
-- Write a sample eplanation for a FTP server
+- Write a sample explianation for a FTP server
 - Update all of the explanations
 - Make Readme generator and setting setter (Maybe)

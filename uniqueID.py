@@ -1,4 +1,6 @@
+import fileinput
 from Tkinter import *
+from datetime import date
 
 def retrieve():
 	if ( str(teamID.get()) != '' and str(studentID.get()) != '' and str(schoolID.get()) != '' and str(teacherID.get()) != '' and str(grade.get()) != '' ):
@@ -11,10 +13,27 @@ def retrieve():
 		for line in (line1, line2, line3, line4, line5):
 			f.write(line)
 		f.close()
+		today = date.today()
 		g = open('/usr/local/bin/name','w+')
-		line = str(teamID.get()).replace(' ', '') + str(studentID.get()).replace(' ', '') + 'ScoreReport.csv'
-		g.write(line)
+		name = str(today) + str(teamID.get()).replace(' ', '') + str(studentID.get()).replace(' ', '') + 'ScoreReport.csv'
+		g.write(name)
 		g.close()
+		with open('FTP.txt') as f:
+			content = f.read().splitlines()
+		f.close()
+		# Read in the file
+		with open('/usr/local/bin/csel_SCORING_REPORT_FTP_DO_NO_TOUCH', 'r') as file :
+		  filedata = file.read()
+
+		# Replace the target string
+		filedata = filedata.replace('#SERVER#', content[0].replace('serverName=',''))
+		filedata = filedata.replace('#USER#', content[1].replace('userName=',''))
+		filedata = filedata.replace('#PASSWORD#', content[2].replace('password=',''))
+		filedata = filedata.replace('#FILENAME#', name)
+
+		# Write the file out again
+		with open('/usr/local/bin/csel_SCORING_REPORT_FTP_DO_NO_TOUCH', 'w') as file:
+		  file.write(filedata)
 		root.destroy()
 	else:
 		warn = Tk()
