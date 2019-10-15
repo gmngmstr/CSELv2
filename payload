@@ -34,13 +34,15 @@ checkForRoot(){ #Gotta be root
 }
 
 askForUniqueID(){ #Ask for the competitors unique id
-	if [[ ! -f "/usr/local/bin/uniqueId" ]]; then
-		notify-send "Please insert your information into the Unique Identifier"
-		ps cax | grep python > /dev/null
-		if [ ! $? -eq 0 ]; then
-			sudo python uniqueID.py &
+	if [ -z "$FTPServer" ]; then :; else
+		if [[ ! -f "/usr/local/bin/uniqueId" ]]; then
+			notify-send "Please insert your information into the Unique Identifier"
+			ps cax | grep python > /dev/null
+			if [ ! $? -eq 0 ]; then
+				sudo python uniqueID.py &
+			fi
+			exit
 		fi
-		exit
 	fi
 	if [ -z "$FTPServer" ]; then :; else
 		nameR=`cat /usr/local/bin/name`
@@ -569,6 +571,7 @@ changePassword(){ #Check certain users for blank passwords
 	echo 'CP'
 	if [ -z "$changePassword" ]; then :; else for t in "${changePasswordValue[@]}"; do addPosPoints $t; done
 		p=0
+		echo ${changePasswordExtraKeywords[$t]}
 		for i in "${changePasswordKeywords[@]}" ; do #Check for blank passwords
 			if [[ $(getent shadow | grep $i\:${changePasswordExtraKeywords[$p]}\:) ]] ; then
 				recordMiss Password

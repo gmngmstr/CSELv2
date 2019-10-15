@@ -372,6 +372,7 @@ def writeToConfig(name,points,keywords,keywordsExtra,message):
 				else:
 					passwdO = passwd[1]
 		keywordsExtra = passwdO.replace('$','\$')
+		keywordsExtra = keywordsExtra.replace('/','\/')
 		os.remove('passGet.sh')
 		os.remove('name.txt')
 	f.write(name+'=(y)\n')
