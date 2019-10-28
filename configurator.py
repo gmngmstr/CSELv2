@@ -745,7 +745,8 @@ def tally():
 							tallyScore = tallyScore + int(entry_textBox[ent2].get())
 					else:
 						tallyVuln = tallyVuln + 1
-						tallyScore = tallyScore + int(entry_textBox[ent2].get())
+						if entry_textBox[ent2].get()!='':
+							tallyScore = tallyScore + int(entry_textBox[ent2].get())
 	scoreTotal.set("Vulnerablilities: {0}\nTotal Points: {1}".format(str(tallyVuln),str(tallyScore)))
 
 def getFTPInfo():
