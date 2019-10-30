@@ -96,6 +96,7 @@
 - Added relaunch of uniqueID if it is closed without finishing
 - Fixed point totaler
 - Created checks for FTPServer option
+- Fixed Forensics Question 2 Answer Output
 
 ## TODO
 - Retest everything
