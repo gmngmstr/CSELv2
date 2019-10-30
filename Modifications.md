@@ -67,6 +67,7 @@
 - Added function to create a new window asking for server info
 - Added a save and load function for the ftp server
 - Fixed the save and load function for the silentMiss option
+- Added a blank points exception to the tally function.
 
 ## List of modifications to payload
 - Fixed score totaler
