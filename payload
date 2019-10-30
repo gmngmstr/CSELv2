@@ -116,7 +116,7 @@ checkForensicsQuestion2(){ #Check for the correct answer in the forensics questi
 	if [ -z "$forensicsAnswer2" ]; then :; else addPosPoints $checkForensicsQuestion2Value
 		echo 'FA2'
 		if grep -q  "ANSWER: $forensicsAnswer2" $forensicsPath2 ; then
-			recordHit 'Forensics Question 2 correct.'$forensicsPath2 $checkForensicsQuestion2Value 'Forensics Question 1'
+			recordHit 'Forensics Question 2 correct. '$forensicsAnswer2 $checkForensicsQuestion2Value 'Forensics Question 1'
 		else
 			recordMiss 'Forensics Question'
 		fi
