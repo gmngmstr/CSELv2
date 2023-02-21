@@ -1,6 +1,6 @@
-import os, sys, subprocess, tkMessageBox, time
+import os, sys, subprocess, tkinter, tkinter.messagebox, time
 from stat import *
-from Tkinter import *
+from tkinter import *
 
 
 class ForenQuest:
@@ -34,9 +34,9 @@ class AutoScrollbar(Scrollbar):
 			self.grid()
 		Scrollbar.set(self, lo, hi)
 	def pack(self, **kw):
-		raise TclError, "cannot use pack with this widget"
+		raise TclError("cannot use pack with this widget")
 	def place(self, **kw):
-		raise TclError, "cannot use place with this widget"
+		raise TclError("cannot use place with this widget")
 
 fq01 = ForenQuest("Question1.txt","Here is my question...","myanswer","0","0")
 fq02 = ForenQuest("Question2.txt","Here is my question...","myanswer","0","0")
@@ -294,7 +294,7 @@ def positionFrames():
 			frame.grid_remove()
 
 def Mbox(title, text):
-    tkMessageBox.showwarning(title, text)
+    tkinter.messagebox.showwarning(title, text)
 
 #Create the forensics questions and add answers to csel.cfg
 def saveForQ():
@@ -315,14 +315,16 @@ def saveForQ():
 		g = open((str(usrDsktp.get())+'Question1.txt'),'w+')
 		g.write(qHeader+fquest01.get()+qFooter)
 		g.close()
-		os.chmod((str(usrDsktp.get())+'Question1.txt'), 0777)
+		os.chmod((str(usrDsktp.get())+'Question1.txt'), 777)
+		#os.chmod((str(usrDsktp.get())+'Question1.txt'), 0777)
 	if fqcb02.get() != 0:
 		for line in (line2a,line2b,line2c,line2d):
 			f.write(line)
 		h = open((str(usrDsktp.get())+'Question2.txt'),'w+')
 		h.write(qHeader+fquest02.get()+qFooter)
 		h.close()
-		os.chmod((str(usrDsktp.get())+'Question2.txt'), 0777)
+		os.chmod((str(usrDsktp.get())+'Question2.txt'), 777)
+		#os.chmod((str(usrDsktp.get())+'Question2.txt'), 0777)
 	f.close()
 	
 def createForQ():
@@ -341,14 +343,16 @@ def createForQ():
 		g = open((str(usrDsktp.get())+'Question1.txt'),'w+')
 		g.write(qHeader+fquest01.get()+qFooter)
 		g.close()
-		os.chmod((str(usrDsktp.get())+'Question1.txt'), 0777)
+		os.chmod((str(usrDsktp.get())+'Question1.txt'), 777)
+		#os.chmod((str(usrDsktp.get())+'Question1.txt'), 0777)
 	if fqcb02.get() != 0:
 		for line in (line2a,line2b,line2c):
 			f.write(line)
 		h = open((str(usrDsktp.get())+'Question2.txt'),'w+')
 		h.write(qHeader+fquest02.get()+qFooter)
 		h.close()
-		os.chmod((str(usrDsktp.get())+'Question2.txt'), 0777)
+		os.chmod((str(usrDsktp.get())+'Question2.txt'), 777)
+		#os.chmod((str(usrDsktp.get())+'Question2.txt'), 0777)
 	f.close()
 
 #What happens when you click Submit?
@@ -358,7 +362,8 @@ def writeToConfig(name,points,keywords,keywordsExtra,message):
 		v = open('passGet.sh','w+')
 		v.write("#!/bin/bash\n\nnames=\'"+keywords+"\'\necho '' > name.txt\nIFS=\' \'\nread -ra NAME <<< \"$names\"\nfor i in \"${NAME[@]}\"; do\ngetent shadow | grep \"$i\" >> name.txt\ndone")
 		v.close()
-		os.chmod('passGet.sh', 0777)
+		os.chmod('passGet.sh', 777)
+		#os.chmod('passGet.sh', 0777)
 		subprocess.call(['./passGet.sh'])
 		with open('name.txt') as t:
 			content = t.read().splitlines()
