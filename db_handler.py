@@ -14,7 +14,7 @@ try:
     if not os.path.exists(base_path):
         os.makedirs(base_path)
 except Exception:
-    base_path = os.path.abspath(".")
+    base_path = os.path.abspath("")
     passExist = False
 db = os.path.join(base_path, 'save_data.db')
 
@@ -122,7 +122,7 @@ class VulnerabilityTemplateModel(base):
         super(VulnerabilityTemplateModel, self).__init__(**kwargs)
 
 
-base.metadata.create_all()
+base.metadata.create_all(engine)
 
 
 class OptionTables:
@@ -155,7 +155,7 @@ class OptionTables:
                 checks_dict.update({chk[0]: chk[1]})
                 self.checks_list[name].update({chk[0]: chk[0]})
             create_option_table(name, checks_dict, self.models)
-        base.metadata.create_all()
+        base.metadata.create_all(engine)
 
         for name in self.models:
             try:
