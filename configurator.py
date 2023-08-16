@@ -1,7 +1,10 @@
 import os, sys, subprocess, tkinter, tkinter.messagebox, time
 from stat import *
 from tkinter import *
+from tkinter import ttk
 
+
+root = Tk()
 
 class ForenQuest:
     def __init__(self,name,question,answer,points,enabled):
@@ -11,12 +14,14 @@ class ForenQuest:
         self.points = points
         self.enabled = enabled
 
-class Vuln:
-	def __init__(self,name,layout,tip,saved):
-		self.name = name        #What is the vulnerability called?
-		self.lay = layout		#What to put in each box
-		self.tip = tip          #Explanation of the item
-		self.saved = saved
+class Vuln():
+	def __init__(self,name,layout,tip,saved,qType):
+		self.name = name        				#What is the vulnerability called?
+		self.lay = layout						#What to put in each box
+		self.tip = tip   				    	#Explanation of the item
+		self.saved = saved						#saved to longterm  
+		self.qType = qType						#type of Q (bool = 0, single complex = 1, multiple complex = 2)
+
 
 class FullScreenApp(object):
 	def __init__(self, master, **kwargs):
@@ -25,7 +30,7 @@ class FullScreenApp(object):
 		master.geometry("{0}x{1}+0+0".format(master.winfo_screenwidth()-pad, master.winfo_screenheight()-pad))
 
 class AutoScrollbar(Scrollbar):
-	# a scrollbar that hides itself if it's not needed. only works if you use th4e grid geometry manager.
+	# a scrollbar that hides itself if it's not needed. only works if you use the grid geometry manager.
 	def set(self, lo, hi):
 		if float(lo) <= 0.0 and float(hi) >= 1.0:
 			# grid_remove is currently missing from Tkinter!
@@ -37,57 +42,65 @@ class AutoScrollbar(Scrollbar):
 		raise TclError("cannot use pack with this widget")
 	def place(self, **kw):
 		raise TclError("cannot use place with this widget")
-
+cb2List = {}
+bufferList = {}
 fq01 = ForenQuest("Question1.txt","Here is my question...","myanswer","0","0")
 fq02 = ForenQuest("Question2.txt","Here is my question...","myanswer","0","0")
-v001 = Vuln("silentMiss","","Check this box to hide missed items (Similar to competition)",False)
-v002 = Vuln("FTPServer","","Check this box to enable an FTP server to save the scores (Similar to competition)",False)
-v003 = Vuln("<Select One>","","<Description>",False)
-v201 = Vuln("disableGuest","","Is the guest disabled in lightdm?",False)
-v202 = Vuln("disableAutoLogin","","Is there an auto logged in user in lightdm?",False)
-v203 = Vuln("disableUserGreeter","","Disable the user greeter in lightdm",False)
-v204 = Vuln("disableSshRootLogin","","'PermitRootLogin no' exists in sshd_config",False)
-v205 = Vuln("checkFirewall","","Is ufw enabled?",False)
-v206 = Vuln("checkKernel","","Has kernel been updated?",False)
-v207 = Vuln("avUpdated","","Has clamav freshclam been run?",False)
-v208 = Vuln("minPassAge","","Value of min password age to score is 30 (login.defs)",False)
-v209 = Vuln("maxPassAge","","Value of max password age to score is 60 (login.defs)",False)
-v210 = Vuln("maxLoginTries","","Value of max login retries to score is 5 (login.defs)",False)
-v211 = Vuln("checkPassLength","","Value min pw length is 10 (pam.d/common-password)",False)
-v212 = Vuln("checkPassHist","","Value of passwords to remember is 5 (pam.d/common-password)",False)
-v213 = Vuln("checkPassCompx","","Has password complexity been implemented? (pam.d/common-password)",False)
-v214 = Vuln("updateCheckPeriod","","Has the update check period been set to daily? (apt/apt.conf.d/10periodic)",False)
-v215 = Vuln("updateAutoInstall","","Automaticaly download and install security updates.",False)
-v301 = Vuln("goodUser","(Users)","Lose points for removing this user (use negative number) (Can take multiple entries)",False)
-v302 = Vuln("badUser","(Users)","Remove these users to score (Can take multiple entries)",False)
-v303 = Vuln("newUser","(Users)","This user must be created (Can take multiple entries)",False)
-v304 = Vuln("changePassword","(Users)","User who must change password (Can take multiple entries)(Set the desired passwords before submitting)",False)
-v305 = Vuln("goodAdmin","(Users)","Add these users to the sudo group (Can take multiple entries)",False)
-v306 = Vuln("badAdmin","(Users)","Remove these users from the sudo group (Can take multiple entries)",False)
-v307 = Vuln("goodGroup","(Groups)","This group must be created (Can take multiple entries)",False)
-v308 = Vuln("badGroup","(Groups)","This group must be removed (Can take multiple entries)",False)
-v309 = Vuln("goodProgram","(Programs)","Score points by installing these programs (Can take multiple entries)",False)
-v310 = Vuln("badProgram","(Programs)","Score points by removing these programs (Can take multiple entries)",False)
-v311 = Vuln("goodService","(Services)","Service that needs to be started (Can take multiple entries)",False)
-v312 = Vuln("badService","(Services)","Service that needs to be stopped (Can take multiple entries)",False)
-v313 = Vuln("badFile","(Location)","Score points for deleting this file (Can take multiple entries)",False)
-v314 = Vuln("secureSudoers","(Keywords)","Words to be removed from /etc/sudoers file (Can take multiple entries)",False)
-v315 = Vuln("checkHosts","(Keywords)","Check /etc/hosts for a specific string (Can take multiple entries)",False)
-v316 = Vuln("checkStartup","(Keywords)","Check rc.local for a specific string (Can take multiple entries)",False)
-v401 = Vuln("badCron","(User)(Keyword)","Check the root crontab for a specific string (Can take multiple entries)(If using multiple users be sure to include a keyword for each)",False)
-v402 = Vuln("userInGroup","(users)(Group)","Users that need to be added to a group (Can take multiple entries)(If using multiple users be sure to include a group for each)",False)
-v501 = Vuln("fileContainsText1","","Custom option for requiring a word or phrase to be added to a file.(Spaces will not be counted as separate entries)",False)
-v502 = Vuln("fileContainsText2","","Custom option for requiring a word or phrase to be added to a file.(Spaces will not be counted as separate entries)",False)
-v503 = Vuln("fileNoLongerContains1","","Custom option for requiring a word or phrase to be removed from a file.(Spaces will not be counted as separate entries)",False)
-v504 = Vuln("fileNoLongerContains2","","Custom option for requiring a word or phrase to be removed from a file.(Spaces will not be counted as separate entries)",False)
+v001 = Vuln("silentMiss","","Check this box to hide missed items (Similar to competition)",False,"0")
+v002 = Vuln("FTPServer","","Check this box to enable an FTP server to save the scores (Similar to competition)",False, "0")
+v003 = Vuln("<Select One>","","<Description>",False,"0")
+v201 = Vuln("disableGuest","","Is the guest disabled in lightdm?",False,"0")
+v202 = Vuln("disableAutoLogin","","Is there an auto logged in user in lightdm?",False,"0")
+v203 = Vuln("disableUserGreeter","","Disable the user greeter in lightdm",False,"0")
+v204 = Vuln("disableSshRootLogin","","'PermitRootLogin no' exists in sshd_config",False,"0")
+v205 = Vuln("checkFirewall","","Is ufw enabled?",False,"0")
+v206 = Vuln("checkKernel","","Has kernel been updated?",False,"0")
+v207 = Vuln("avUpdated","","Has clamav freshclam been run?",False,"0")
+v208 = Vuln("minPassAge","","Value of min password age to score is 30 (login.defs)",False,"0")
+v209 = Vuln("maxPassAge","","Value of max password age to score is 60 (login.defs)",False,"0")
+v210 = Vuln("maxLoginTries","","Value of max login retries to score is 5 (login.defs)",False,"0")
+v211 = Vuln("checkPassLength","","Value min pw length is 10 (pam.d/common-password)",False,"0")
+v212 = Vuln("checkPassHist","","Value of passwords to remember is 5 (pam.d/common-password)",False,"0")
+v213 = Vuln("checkPassCompx","","Has password complexity been implemented? (pam.d/common-password)",False,"0")
+v214 = Vuln("updateCheckPeriod","","Has the update check period been set to daily? (apt/apt.conf.d/10periodic)",False,"0")
+v215 = Vuln("updateAutoInstall","","Automaticaly download and install security updates.",False,"0")
+v301 = Vuln("goodUser","(Users)","Lose points for removing this user (use negative number) (Can take multiple entries)",False,"2")
+v302 = Vuln("badUser","(Users)","Remove these users to score (Can take multiple entries)",False,"2")
+v303 = Vuln("newUser","(Users)","This user must be created (Can take multiple entries)",False,"2")
+v304 = Vuln("changePassword","(Users)","User who must change password (Can take multiple entries)(Set the desired passwords before submitting)",False,"2")
+v305 = Vuln("goodAdmin","(Users)","Add these users to the sudo group (Can take multiple entries)",False,"2")
+v306 = Vuln("badAdmin","(Users)","Remove these users from the sudo group (Can take multiple entries)",False,"2")
+v307 = Vuln("goodGroup","(Groups)","This group must be created (Can take multiple entries)",False,"2")
+v308 = Vuln("badGroup","(Groups)","This group must be removed (Can take multiple entries)",False,"2")
+v309 = Vuln("goodProgram","(Programs)","Score points by installing these programs (Can take multiple entries)",False,"2")
+v310 = Vuln("badProgram","(Programs)","Score points by removing these programs (Can take multiple entries)",False,"2")
+v311 = Vuln("goodService","(Services)","Service that needs to be started (Can take multiple entries)",False,"2")
+v312 = Vuln("badService","(Services)","Service that needs to be stopped (Can take multiple entries)",False,"2")
+v313 = Vuln("badFile","(Location)","Score points for deleting this file (Can take multiple entries)",False,"2")
+v314 = Vuln("secureSudoers","(Keywords)","Words to be removed from /etc/sudoers file (Can take multiple entries)",False,"2")
+v315 = Vuln("checkHosts","(Keywords)","Check /etc/hosts for a specific string (Can take multiple entries)",False,"2")
+v316 = Vuln("checkStartup","(Keywords)","Check rc.local for a specific string (Can take multiple entries)",False,"2")
+v401 = Vuln("badCron","(User)(Keyword)","Check the root crontab for a specific string (Can take multiple entries)(If using multiple users be sure to include a keyword for each)",False,"2")
+v402 = Vuln("userInGroup","(users)(Group)","Users that need to be added to a group (Can take multiple entries)(If using multiple users be sure to include a group for each)",False,"2")
+v501 = Vuln("fileContainsText1","","Custom option for requiring a word or phrase to be added to a file.(Spaces will not be counted as separate entries)",False,"1")
+v502 = Vuln("fileContainsText2","","Custom option for requiring a word or phrase to be added to a file.(Spaces will not be counted as separate entries)",False,"1")
+v503 = Vuln("fileNoLongerContains1","","Custom option for requiring a word or phrase to be removed from a file.(Spaces will not be counted as separate entries)",False,"1")
+v504 = Vuln("fileNoLongerContains2","","Custom option for requiring a word or phrase to be removed from a file.(Spaces will not be counted as separate entries)",False,"1")
 
 vulns = [v001,v002,v201,v202,v203,v204,v205,v206,v207,v208,v209,v210,v211,v212,v213,v214,v215,v301,v302,v303,v304,v305,v306,v307,v308,v309,v310,v311,v312,v313,v314,v315,v316,v401,v402,v501,v502,v503,v504]
 dontCheck = [ "silentMiss","<Select One>","Remove" ]
-vulnNames2 = [ "disableGuest","disableAutoLogin","disableUserGreeter","disableSshRootLogin","checkFirewall","checkKernel","avUpdated","minPassAge","maxPassAge","maxLoginTries","checkPassHist","checkPassCompx","updateCheckPeriod","updateAutoInstall","Remove" ]
-vulnNames3 = [ "goodUser","badUser","newUser","changePassword","goodAdmin","badAdmin","goodGroup","badGroup","goodProgram","badProgram","goodService","badService","badFile","secureSudoers","checkHosts","checkStartup","Remove" ]
+vuln2 = [v201,v202,v203,v204,v205,v206,v207,v208,v209,v210,v211,v212,v213,v214,v215]
+vulnNames3 = [ "GoodUser","BadUser","NewUser","changePassword","goodAdmin","badAdmin","goodGroup","badGroup","goodProgram","badProgram","goodService","badService","badFile","secureSudoers","checkHosts","checkStartup","Remove" ]
+vuln3 = [v301,v302,v303,v304,v305,v306,v307,v308,v309,v310,v311,v312,v313,v314,v315,v316]
 vulnNames4 = [ "badCron","userInGroup","Remove" ]
+vuln4 = [v401,v402]
 vulnNames5 = [ "fileContainsText1","fileNoLongerContains1","Remove" ]
+vuln5 = [v501,v502,v503,v504]
 
+#database build
+
+
+# gui build
 
 def addOptionMenu(loc, bRow, bColumn, list, optSet):
 	eSave = len(all_entries)
@@ -116,12 +129,78 @@ def addTextLable(loc, des, bRow, bColumn):
 	return entry_lable_count
 
 
-def addToFrame2(optSet):
-	global entry_frame2_count
-	entry_frame2_count = entry_frame2_count + 1
-	frame2 = Frame(canvas)
-	frame2.grid(row=100, column=0, sticky=W)
-	
+
+
+def cbChecked():
+	for box in cb2List:
+		if cb2List[box][4].get() == 1:
+			bufferList = cb2List.get(box)
+			print (bufferList)
+
+
+
+
+#The following addToFrame_ functions will fill the gui with checkboxes
+def addToFrame2():
+	canvas = Canvas(frame2)
+	#canvas.pack(side=tkinter.LEFT,fill=tkinter.BOTH,expand=1)
+	canvas.pack(fill=tkinter.BOTH,expand=1)
+	#vScrollbar = ttk.Scrollbar(frame2, orient=tkinter.VERTICAL,command=canvas.yview)
+	#vScrollbar.pack(side=RIGHT,fill=tkinter.Y)
+	#canvas.config(yscrollcommand=vScrollbar.set)
+
+	#frame in canvas named common
+	common = tkinter.Frame(canvas)
+	common.bind('<Configure>',lambda : canvas.configure(scrollregion=canvas.bbox("all")) )
+	common.grid(row=0,column=0,columnspan=3,sticky=NSEW)
+	common.columnconfigure(0,weight=1) 
+	common.columnconfigure(1,weight=1) 
+	common.columnconfigure(2,weight=2) 
+
+	canvas.create_window((0,0),window=common, anchor="nw")
+
+	for r, vul in enumerate(vuln3):
+		cb2List.update({vul.name: {}})
+		switch = IntVar()
+		points = StringVar()
+		points.set("points")
+		cb2List[vul.name] = vul.name, vul.saved,vul.lay,vul.tip, switch, points
+		Checkbutton(common,text=vul.name,variable=cb2List[vul.name][4]).grid(row=r, column = 0, sticky=W)
+		Label(common,text=vul.tip).grid(row=r,column=1,sticky=W)
+		if vul.qType == "0":
+			Entry(common,textvariable=cb2List[vul.name][5]).grid(row=r,column=2,sticky=W)
+		else:
+			Button(common,text='Add',command=lambda: addVuln(common,vul)).grid(row =r,column=2,sticky=E)
+		#Button(common,text='Add',command=lambda: addVuln(common, vul)).grid(row =r,column=2,sticky=E)
+		#Checkbutton(common,text=vul.name,variable=vul.cb).grid(row=i, column = 0, sticky=W)
+	common.columnconfigure(tuple(range(10)), weight=1)
+	common.rowconfigure(tuple(range(5)), weight=1)
+
+def addVuln(rFrame,vul):
+	root.pack_slaves()[0].pack_forget()
+	addCanv = Canvas(frame2)
+	addCanv.pack(side=tkinter.LEFT,fill=tkinter.BOTH,expand=1)
+
+	vScrollbar = ttk.Scrollbar(frame2, orient=tkinter.VERTICAL,command=canvas.yview)
+	vScrollbar.pack(side=RIGHT,fill=tkinter.Y)
+	addCanv.config(yscrollcommand=vScrollbar.set)
+
+	#frame in canvas 
+	addCommon = tkinter.Frame(addCanv)
+	addCommon.bind('<Configure>', lambda : addCanv.configure(scrollregion=canvas.bbox("all")))
+	addCanv.create_window((0,0),window=addCommon, anchor="nw")
+
+	#add vuln fill 	
+	match vul.qType:
+		case "1":
+			#top of buttons
+			Label(addCommon,text='vul.').grid(row =0,column=0,sticky=E)
+		case "2":
+			Button(common,text='Add',command=lambda: addVuln(common, vul)).grid(row =r,column=2,sticky=E)
+		case _:
+			Label(text="fix it")
+
+	'''
 	ent1 = 2
 	addOptionMenu(frame2, 1, 0, vulnNames2, optSet)
 	
@@ -132,15 +211,17 @@ def addToFrame2(optSet):
 	ent4 = -1
 	
 	ent5 = -1
-	
+	`
 	ent6 = -1
 	
 	ent7 = addTextLable(frame2, "<Description>", 1, 2)
 	
 	all_entries.append((ent1, ent2, ent3, ent4, ent5, ent6, ent7, frame2))
 	positionFrames()
-
-def addToFrame3(optSet):
+	'''
+'''
+def addToFrame3():
+	
 	global entry_frame3_count
 	entry_frame3_count = entry_frame3_count + 1
 	frame3 = Frame(canvas)
@@ -163,8 +244,31 @@ def addToFrame3(optSet):
 	
 	all_entries.append((ent1, ent2, ent3, ent4, ent5, ent6, ent7, frame3))
 	positionFrames()
+	
+	#canvas to edit in tab
+	canvas = Canvas(frame3)
+	canvas.pack(side=tkinter.LEFT,fill=tkinter.BOTH,expand=1)
 
-def addToFrame4(optSet):
+
+	vScrollbar = ttk.Scrollbar(frame3, orient=tkinter.VERTICAL,command=canvas.yview)
+	vScrollbar.pack(side=RIGHT,fill=tkinter.Y)
+	canvas.config(yscrollcommand=vScrollbar.set)
+
+	#frame in canvas 
+	common = tkinter.Frame(canvas)
+	common.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+	canvas.create_window((0,0),window=common, anchor="nw")
+	
+	i = 0
+	for vul in vuln3:
+		Checkbutton(common,text=vul.name,variable=toEnlist(vul)).grid(row=i, column = 0, sticky=W)
+		i+=1
+	#Checkbutton(frame1,text=fq01.name,variable=fqcb01).grid(row=5,column=1,sticky=W)
+'''
+
+'''
+def addToFrame4():
+	
 	global entry_frame4_count
 	entry_frame4_count = entry_frame4_count + 1
 	frame4 = Frame(canvas)
@@ -187,8 +291,29 @@ def addToFrame4(optSet):
 	
 	all_entries.append((ent1, ent2, ent3, ent4, ent5, ent6, ent7, frame4))
 	positionFrames()
+	
 
-def addToFrame5(optSet):
+
+	canvas = Canvas(frame4)
+	canvas.pack(side=tkinter.LEFT,fill=tkinter.BOTH,expand=1)
+
+
+	vScrollbar = ttk.Scrollbar(frame4, orient=tkinter.VERTICAL,command=canvas.yview)
+	vScrollbar.pack(side=RIGHT,fill=tkinter.Y)
+	canvas.config(yscrollcommand=vScrollbar.set)
+
+	#frame in canvas 
+	common = tkinter.Frame(canvas)
+	common.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+	canvas.create_window((0,0),window=common, anchor="nw")
+	
+	i = 0
+	for vul in vuln4:
+		Checkbutton(common,text=vul.name,variable=toEnlist(vul)).grid(row=i, column = 0, sticky=W)
+		i+=1
+
+def addToFrame5():
+	
 	global entry_frame5_count
 	entry_frame5_count = entry_frame5_count + 1
 	frame5 = Frame(canvas)
@@ -211,14 +336,40 @@ def addToFrame5(optSet):
 	
 	all_entries.append((ent1, ent2, ent3, ent4, ent5, ent6, ent7, frame5))
 	positionFrames()
+	
+
+
+
+	canvas = Canvas(frame5)
+	canvas.pack(side=tkinter.LEFT,fill=tkinter.BOTH,expand=1)
+
+
+	vScrollbar = ttk.Scrollbar(frame5, orient=tkinter.VERTICAL,command=canvas.yview)
+	vScrollbar.pack(side=RIGHT,fill=tkinter.Y)
+	canvas.config(yscrollcommand=vScrollbar.set)
+
+	#frame in canvas 
+	common = tkinter.Frame(canvas)
+	common.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+	canvas.create_window((0,0),window=common, anchor="nw")
+	
+	i = 0
+	for vul in vuln5:
+		Checkbutton(common,text=vul.name,variable=toEnlist(vul)).grid(row=i, column = 0, sticky=W)
+		i+=1
+'''
+
 
 def setEntry(event):
 	vulnNames2Rem = []
 	vulnNames2RemD = []
-	for number, (ent1, ent2, ent3, ent4, ent5, ent6, ent7, frame) in enumerate(all_entries):
+	'''
+	for number in enumerate(all_entries):
+	# for number, (ent1, ent2, ent3, ent4, ent5, ent6, ent7, frame) in enumerate(all_entries):
 		if entry_select[number].get() in vulnNames2Rem:
 			vulnNames2RemD.append(entry_select[number].get())
-		if entry_select[number].get() in vulnNames2:
+	
+		if entry_select[number].get() in vulns:
 			vulnNames2Rem.append(entry_select[number].get())
 			frame.config(bg=root.cget('bg'))
 			error.grid_remove()
@@ -226,17 +377,20 @@ def setEntry(event):
 			dupFree = True
 		if entry_select[number].get() == "Remove":
 			frame.grid_remove()
+	
 		for vuln in vulns:
 			if vuln.name == entry_select[number].get():
 				entry_lable[ent6].set(vuln.lay)
 				entry_lable[ent7].set(vuln.tip)
+				
 	for number, (ent1, ent2, ent3, ent4, ent5, ent6, ent7, frame) in enumerate(all_entries):
 		if entry_select[number].get() in vulnNames2RemD:
 			frame.config(bg='red')
 			error.grid(row=2,column=3)
 			errorFree = False
 			dupFree = False
-
+'''
+	
 def positionFrames():
 	frame2_pos = 2
 	count2 = 1
@@ -292,11 +446,10 @@ def positionFrames():
 		frame.grid(row=frame5_pos, column=0, sticky=W)
 		if entry_select[number].get() == "Remove":
 			frame.grid_remove()
-
 def Mbox(title, text):
     tkinter.messagebox.showwarning(title, text)
 
-#Create the forensics questions and add answers to csel.cfg
+#points with leading 0 cause octal error 
 def saveForQ():
 	qHeader='This is a forensics question. Answer it below\n------------------------\n'
 	qFooter='\n\nANSWER: <TypeAnswerHere>'
@@ -315,17 +468,16 @@ def saveForQ():
 		g = open((str(usrDsktp.get())+'Question1.txt'),'w+')
 		g.write(qHeader+fquest01.get()+qFooter)
 		g.close()
-		os.chmod((str(usrDsktp.get())+'Question1.txt'), 777)
-		#os.chmod((str(usrDsktp.get())+'Question1.txt'), 0777)
+		os.chmod((str(usrDsktp.get())+'Question1.txt'), 0o777)
 	if fqcb02.get() != 0:
 		for line in (line2a,line2b,line2c,line2d):
 			f.write(line)
 		h = open((str(usrDsktp.get())+'Question2.txt'),'w+')
 		h.write(qHeader+fquest02.get()+qFooter)
 		h.close()
-		os.chmod((str(usrDsktp.get())+'Question2.txt'), 777)
-		#os.chmod((str(usrDsktp.get())+'Question2.txt'), 0777)
+		os.chmod((str(usrDsktp.get())+'Question2.txt'), 0o777)
 	f.close()
+
 	
 def createForQ():
 	qHeader='This is a forensics question. Answer it below\n------------------------\n'
@@ -340,11 +492,10 @@ def createForQ():
 	if fqcb01.get() != 0:
 		for line in (line1a,line1b,line1c):
 			f.write(line)
-		g = open((str(usrDsktp.get())+'Question1.txt'),'w+')
+		g = open((str(usrDsktp.get())+'Question1.txt'))
 		g.write(qHeader+fquest01.get()+qFooter)
 		g.close()
 		os.chmod((str(usrDsktp.get())+'Question1.txt'), 777)
-		#os.chmod((str(usrDsktp.get())+'Question1.txt'), 0777)
 	if fqcb02.get() != 0:
 		for line in (line2a,line2b,line2c):
 			f.write(line)
@@ -352,7 +503,6 @@ def createForQ():
 		h.write(qHeader+fquest02.get()+qFooter)
 		h.close()
 		os.chmod((str(usrDsktp.get())+'Question2.txt'), 777)
-		#os.chmod((str(usrDsktp.get())+'Question2.txt'), 0777)
 	f.close()
 
 #What happens when you click Submit?
@@ -515,10 +665,11 @@ def submitCallback():
 		subprocess.Popen(['./install.sh'])
 		time.sleep(2)
 		exit()
-		
-	
+
 def saveConfig():
-	#We wanna use those fancy variable lists 
+	#We wanna use those fancy variable lists
+#open csel file 
+	usrDsktp.set(os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop/'))
 	if userLoc.get() == 1:
 		cwd = os.getcwd()
 		cwd = cwd.replace("CSEL-master", "")
@@ -527,14 +678,15 @@ def saveConfig():
 		cwd = usrDsktp.get()
 		cwd = "/home/"+cwd+"/Desktop/"
 		usrDsktp.set(cwd)
-	scoreLoc.set(usrDsktp.get())
+	scoreLoc.set(usrDsktp)
 	f = open('csel.txt','w+')
-	f.write('Desktop='+usrDsktp.get()+'\n')
+	f.write('Desktop='+ usrDsktp.get() +'\n')
 	if silentMode.get() ==1:
 		f.write('silentMiss=(y)\n')
 	if ftpMode.get() == 1:
 		f.write('FTPServer=(y)\n')
 	f.close()
+	#write and update forensics quesitons
 	saveForQ()
 	if ftpMode.get() == 1:
 		f = open('FTP.txt','w+')
@@ -547,9 +699,32 @@ def saveConfig():
 	save_entry = []
 	buff_entry = []
 	f = open('csel.txt','a')
-	for number, (ent1, ent2, ent3, ent4, ent5, ent6, ent7, frame) in enumerate(all_entries):
+	#for number, (ent1, ent2, ent3, ent4, ent5, ent6, ent7, frame) in enumerate(all_entries):
+	cbChecked()
+	
+	'''
+	for en in enumerate(all_entries):
+
+
+
+		for n, (s1, s2, s3, s4, s5) in enumerate(save_entry):
+			f.write(s1 + '=(y)\n')
+			f.write(s2 + ')\n')
+			if s3 != '':
+				f.write(s3 + ')\n')
+			if s4 != '':
+				f.write(s4 + ')\n')
+			if s5 != '':
+				f.write(s5 + ')\n')
+	'''
+	#for vuln in vulns:
+	#	vuln.saved = False
+	loadSave()	
+	f.close()
+'''
 		for vuln in vulns:
-			if vuln.name == entry_select[number].get() and vuln.name != "<Select One>":
+			#if vuln.name == entry_select[number].get() and vuln.name != "<Select One>":
+			if vuln.cb == 1:
 				if not vuln.saved:
 					s1 = vuln.name
 					s2 = vuln.name + 'Value=(' + entry_textBox[ent2].get()
@@ -602,9 +777,8 @@ def saveConfig():
 			f.write(s5 + ')\n')
 	for vuln in vulns:
 		vuln.saved = False
-			
-	f.close()
-	tally()
+		'''
+	
 	
 def loadSave():
 	content = []
@@ -629,37 +803,46 @@ def loadSave():
 			fqP1 = cont.replace('checkForensicsQuestion1Value=(','')
 			fqP1 = fqP1.replace(')','')
 			fqpts01.set(fqP1)
+			fq01.points = fqpts01.get()
 			fqcb01.set(1)
 			cont = fqP1
 		if 'forensicsQuestion1=' in cont:
 			fQ1 = cont.replace('forensicsQuestion1=','')
 			fquest01.set(fQ1)
+			fq01.question = fquest01.get()
 			cont = fQ1
 		if 'forensicsAnswer2=(' in cont:
 			fqA2 = cont.replace('forensicsAnswer2=(','')
 			fqA2 = fqA2.replace(')','')
 			fqans02.set(fqA2)
+			fq02.answer = fqans02.get()
 			cont = fqA2
 		if 'checkForensicsQuestion2Value=(' in cont:
 			fqP2 = cont.replace('checkForensicsQuestion2Value=(','')
 			fqP2 = fqP2.replace(')','')
-			fqpts01.set(fqP2)
+			fqpts02.set(fqP2)
 			fqcb02.set(1)
+			fq02.points = fqpts02.get()
 			cont = fqP2
 		if 'forensicsQuestion2=' in cont:
 			fQ2 = cont.replace('forensicsQuestion2=','')
 			fquest02.set(fQ2)
+			fq02.question = fquest02.get()
 			cont = fQ2
+
+	
+	'''
+	#fill in text for the empty boxes 
 	for cont in content:
 		for vuln in vulns:
 			if vuln.name+'=(y)' in cont:
-				if vuln.name in vulnNames2:
+				if vuln.name in vuln2:
 					addToFrame2(vuln.name)
-				elif vuln.name in vulnNames3:
+				elif vuln.name in vuln3:
 					addToFrame3(vuln.name)
-				elif vuln.name in vulnNames4:
+				elif vuln.name in vuln4:
 					addToFrame4(vuln.name)
-				elif vuln.name in vulnNames5:
+				elif vuln.name in vuln5:
 					addToFrame5(vuln.name)
 			elif vuln.name+'Value=(' in cont:
 				points = cont.replace(vuln.name+'Value=(','')
@@ -730,6 +913,7 @@ def loadSave():
 								else:
 									key = key + ' ' + msg[p]
 								entry_textBox[ent5].set(key)
+								'''
 	setEntry('')
 	tally()
 
@@ -752,6 +936,10 @@ def tally():
 						tallyVuln = tallyVuln + 1
 						if entry_textBox[ent2].get()!='':
 							tallyScore = tallyScore + int(entry_textBox[ent2].get())
+	if fqcb01.get() == 1:
+		tallyVuln += int(fq01.points)
+	if fqcb02.get() == 1:
+		tallyVuln += int(fq02.points)
 	scoreTotal.set("Vulnerablilities: {0}\nTotal Points: {1}".format(str(tallyVuln),str(tallyScore)))
 
 def getFTPInfo():
@@ -794,7 +982,7 @@ entry_textBox = []
 entry_textBox_count = -1
 entry_lable = []
 entry_lable_count = -1
-root = Tk()
+#root = Tk()
 root.title('CSEL Setup Tool')
 userLoc = IntVar()
 usrDsktp = StringVar()
@@ -806,7 +994,7 @@ userName = StringVar()
 password = StringVar()
 scoreLoc = StringVar()
 scoreTotal = StringVar()
-scoreTotal.set("Vulnerablilities: 0\nTotal Points: 0")
+scoreTotal.get()
 # Forensic Question stuff
 fqcb01 = IntVar()
 fqpts01 = IntVar()
@@ -817,63 +1005,108 @@ fqpts02 = IntVar()
 fquest02 = StringVar()
 fqans02 = StringVar()
 
+
+class Vuln():
+	def __init__(self,name,layout,tip,saved):
+		self.name = name        				#What is the vulnerability called?
+		self.lay = layout						#What to put in each box
+		self.tip = tip   				    	#Explanation of the item
+		self.saved = saved
+		self.cb = IntVar()
+
+
+root.geometry('1000x800')
 # GUI Creation
-vscrollbar = AutoScrollbar(root)
-vscrollbar.grid(row=0, column=1, sticky=N+S)
-hscrollbar = AutoScrollbar(root, orient=HORIZONTAL)
-hscrollbar.grid(row=1, column=0, sticky=E+W)
+#vscrollbar = AutoScrollbar(root)
+#vscrollbar.grid(row=0, column=1, sticky=N+S)
+#hscrollbar = AutoScrollbar(root, orient=HORIZONTAL)
+#hscrollbar.grid(row=1, column=0, sticky=E+W)
 
-canvas = Canvas(root, yscrollcommand=vscrollbar.set, xscrollcommand=hscrollbar.set)
-canvas.grid(row=0, column=0, sticky=N+S+E+W)
-canvas.config(scrollregion=canvas.bbox("all"))
-vscrollbar.config(command=canvas.yview)
-hscrollbar.config(command=canvas.xview)
+#canvas = Canvas(root, yscrollcommand=vscrollbar.set, xscrollcommand=hscrollbar.set)
+#canvas.grid(row=0, column=0, sticky=N+S+E+W)
+#canvas.config(scrollregion=canvas.bbox("all"))
+#vscrollbar.config(command=canvas.yview)
+#hscrollbar.config(command=canvas.xview)
 
-root.grid_rowconfigure(0, weight=1)
-root.grid_columnconfigure(0, weight=1)
+#root.grid_rowconfigure(0, weight=1)
+#root.grid_columnconfigure(0, weight=1)
+
+#notebook setup
+nb = ttk.Notebook(root)
+nb.pack(fill=tkinter.BOTH,expand=1)
+
+
+#first tab
+mFrame = Frame(nb)
+nb.add(mFrame,text='main')
+ttk.Style(root).configure('TNotebook.Tab',width = root.winfo_screenwidth())
+
+
+#canvas to edit in tab
+canvas = Canvas(mFrame)
+canvas.grid(sticky=W)
+
+vScrollbar = ttk.Scrollbar(mFrame, orient=tkinter.VERTICAL,command=canvas.yview)
+vScrollbar.grid(sticky=NS)
+canvas.config(yscrollcommand=vScrollbar.set)
+
+#frame in canvas 
+common = tkinter.Frame(canvas)
+common.bind('<Configure>', lambda e: common.configure(scrollregion=common.bbox("all")))
+canvas.create_window((0,0),window=common, anchor="nw")
+
+
 
 # Frame
-frame = Frame(canvas)
-frame.grid(row=0, column=0, sticky=W)
+#frame = Frame(canvas)
+#frame.grid(row=0, column=0, sticky=W)
 # Frame1
-frame1 = Frame(canvas)
-frame1.grid(row=1, column=0, sticky=W)
+frame1 = Frame(nb)
+nb.add(frame1, text='set1')
+#frame1.grid(row=1, column=0, sticky=W)
 # Frame2
-frame2 = Frame(canvas)
-frame2.grid(row=2, column=0, sticky=W)
+frame2 = Frame(nb)
+nb.add(frame2, text='set2')
+
+#frame2.grid(row=2, column=0, sticky=W)
 # Frame3
-frame3 = Frame(canvas)
-frame3.grid(row=3, column=0, sticky=W)
+frame3 = Frame(nb)
+nb.add(frame3, text='set3')
+#frame3.grid(row=3, column=0, sticky=W)
 # Frame4
-frame4 = Frame(canvas)
-frame4.grid(row=4, column=0, sticky=W)
+frame4 = Frame(nb)
+nb.add(frame4, text='set4')
+
+#frame4.grid(row=4, column=0, sticky=W)
 # Frame5
-frame5 = Frame(canvas)
-frame5.grid(row=5, column=0, sticky=W)
+frame5 = Frame(nb)
+nb.add(frame5, text='set5')
+
+#frame5.grid(row=5, column=0, sticky=W)
 # Frame Interface
-Button(frame,text='Save',command=saveConfig).grid(row=0,column=1)
-Checkbutton(frame,text="Check if this configurator is on the Desktop of the main account.",variable=userLoc).grid(row=0,column=2,sticky=W,columnspan=4)
-Button(frame,text='Write to Config',command=submitCallback).grid(row=1,column=1)
-Entry(frame,textvariable=usrDsktp).grid(row=1,column=2,columnspan=3,sticky=EW)
-Label(frame,text="Enter the user name where\nyou want the information to goto.").grid(row=1,column=4,columnspan=2,sticky=W)
-Checkbutton(frame,text=v001.name,variable=silentMode).grid(row=2,column=1,sticky=W)
-Label(frame,text=v001.tip).grid(row=2,column=2,columnspan=5,sticky=W)
-Checkbutton(frame,text=v002.name,variable=ftpMode,command=getFTPInfo).grid(row=3,column=1,sticky=W)
-Label(frame,text=v002.tip).grid(row=3,column=2,columnspan=5,sticky=W)
-servL = Label(frame,text='Server Name/IP',state='disable')
+Button(common,text='Save',command=saveConfig).grid(row=0,column=1)
+Checkbutton(common,text="Check if this configurator is on the Desktop of the main account.",variable=userLoc).grid(row=0,column=2,sticky=W,columnspan=4)
+Button(common,text='Write to Config',command=submitCallback).grid(row=1,column=1)
+Entry(common,textvariable=usrDsktp).grid(row=1,column=2,columnspan=3,sticky=EW)
+Label(common,text="Enter the user name where\nyou want the information to goto.").grid(row=1,column=4,columnspan=2,sticky=W)
+Checkbutton(common,text=v001.name,variable=silentMode).grid(row=2,column=1,sticky=W)
+Label(common,text=v001.tip).grid(row=2,column=2,columnspan=5,sticky=W)
+Checkbutton(common,text=v002.name,variable=ftpMode,command=getFTPInfo).grid(row=3,column=1,sticky=W)
+Label(common,text=v002.tip).grid(row=3,column=2,columnspan=5,sticky=W)
+servL = Label(common,text='Server Name/IP',state='disable')
 servL.grid(row=4,column=1,sticky=E)
-servE = Entry(frame,textvariable=serverName,state='disable')
+servE = Entry(common,textvariable=serverName,state='disable')
 servE.grid(row=4,column=2,sticky=W)
-userL = Label(frame,text='User Name',state='disable')
+userL = Label(common,text='User Name',state='disable')
 userL.grid(row=4,column=3,sticky=E)
-userE = Entry(frame,textvariable=userName,state='disable')
+userE = Entry(common,textvariable=userName,state='disable')
 userE.grid(row=4,column=4,sticky=W)
-passL = Label(frame,text='Password',state='disable')
+passL = Label(common,text='Password',state='disable')
 passL.grid(row=4,column=5,sticky=E)
-passE = Entry(frame,textvariable=password,state='disable')
+passE = Entry(common,textvariable=password,state='disable')
 passE.grid(row=4,column=6,sticky=W)
-error = Label(frame,text='Please correct the errors\nbefore proceding',fg='red')
-Label(frame,textvariable=scoreTotal,font=('Verdana',10,'bold')).grid(row=5,column=1,sticky=W)
+error = Label(common,text='Please correct the errors\nbefore proceding',fg='red')
+Label(common,textvariable=scoreTotal,font=('Verdana',10,'bold')).grid(row=5,column=1,sticky=W)
 # Frame1 Interface
 Label(frame1,text="Create?",font=('Verdana',10,'bold')).grid(row=0,column=1)
 Label(frame1,text="Points",font=('Verdana',10,'bold')).grid(row=0,column=2)
@@ -888,34 +1121,43 @@ Entry(frame1,width=5,textvariable=fqpts02).grid(row=6,column=2,sticky=W)
 Entry(frame1,textvariable=fquest02).grid(row=6,column=3,sticky=W)
 Entry(frame1,textvariable=fqans02).grid(row=6,column=4,sticky=W)
 # Frame2 Interface
-Button(frame2, text='<Add Entry>', command=lambda: addToFrame2("<Select One>"),width=19).grid(row=0,column=0,sticky=W)
-Label(frame2,text="Points",font=('Verdana',10,'bold')).grid(row=0,column=1,sticky=W,padx=5)
-Label(frame2,text="Explanation",font=('Verdana',10,'bold')).grid(row=0,column=2,sticky=W)
+addToFrame2()
+#Button(frame2, text='Account Management', command=lambda: addToFrame2("<Select One>"),width=19).grid(row=0,column=0,sticky=W)
+#Label(frame2,text="Points",font=('Verdana',10,'bold')).grid(row=0,column=1,sticky=W,padx=5)
+#Label(frame2,text="Explanation",font=('Verdana',10,'bold')).grid(row=0,column=2,sticky=W)
 # Frame3 Interface
-Button(frame3, text='<Add Entry>', command=lambda: addToFrame3("<Select One>"),width=19).grid(row=0,column=0,sticky=W)
-Label(frame3,text="Points",font=('Verdana',10,'bold')).grid(row=0,column=1,sticky=W,padx=5)
-Label(frame3,text="Keywords/Values",font=('Verdana',10,'bold'),width=15).grid(row=0,column=2,sticky=W)
-Label(frame3,text="Contents",font=('Verdana',10,'bold'),width=13).grid(row=0,column=3,sticky=W)
-Label(frame3,text="Explanation (Add a space in between entries)",font=('Verdana',10,'bold')).grid(row=0,column=4,sticky=W)
+#Button(frame3, text='Local Policy', command=lambda: addToFrame3("<Select One>"),width=19).grid(row=0,column=0,sticky=W)
+#Label(frame3,text="Points",font=('Verdana',10,'bold')).grid(row=0,column=1,sticky=W,padx=5)
+#Label(frame3,text="Keywords/Values",font=('Verdana',10,'bold'),width=15).grid(row=0,column=2,sticky=W)
+#Label(frame3,text="Contents",font=('Verdana',10,'bold'),width=13).grid(row=0,column=3,sticky=W)
+#Label(frame3,text="Explanation (Add a space in between entries)",font=('Verdana',10,'bold')).grid(row=0,column=4,sticky=W)
+###addToFrame3()
 # Frame4 Interface
-Button(frame4, text='<Add Entry>', command=lambda: addToFrame4("<Select One>"),width=19).grid(row=0,column=0,sticky=W)
-Label(frame4,text="Points",font=('Verdana',10,'bold')).grid(row=0,column=1,sticky=W,padx=5)
-Label(frame4,text="Keywords/Values",font=('Verdana',10,'bold'),width=15).grid(row=0,column=2,sticky=W)
-Label(frame4,text="Keywords/Values",font=('Verdana',10,'bold'),width=20).grid(row=0,column=3,sticky=W)
-Label(frame4,text="Contents",font=('Verdana',10,'bold'),width=13).grid(row=0,column=4,sticky=W)
-Label(frame4,text="Explanation (Add a space in between entries)",font=('Verdana',10,'bold')).grid(row=0,column=5,sticky=W)
+#Button(frame4, text='Program Management', command=lambda: addToFrame4("<Select One>"),width=19).grid(row=0,column=0,sticky=W)
+#Label(frame4,text="Points",font=('Verdana',10,'bold')).grid(row=0,column=1,sticky=W,padx=5)
+#Label(frame4,text="Keywords/Values",font=('Verdana',10,'bold'),width=15).grid(row=0,column=2,sticky=W)
+#Label(frame4,text="Keywords/Values",font=('Verdana',10,'bold'),width=20).grid(row=0,column=3,sticky=W)
+#Label(frame4,text="Contents",font=('Verdana',10,'bold'),width=13).grid(row=0,column=4,sticky=W)
+#Label(frame4,text="Explanation (Add a space in between entries)",font=('Verdana',10,'bold')).grid(row=0,column=5,sticky=W)
+###addToFrame4()
 # Frame5 Interface
-Button(frame5, text='<Add Entry>', command=lambda: addToFrame5("<Select One>"),width=19).grid(row=0,column=0,sticky=W)
-Label(frame5,text="Points",font=('Verdana',10,'bold')).grid(row=0,column=1,sticky=W,padx=5)
-Label(frame5,text="Keywords/Values",font=('Verdana',10,'bold'),width=20).grid(row=0,column=2,sticky=W)
-Label(frame5,text="Completion Message",font=('Verdana',10,'bold'),width=18).grid(row=0,column=3,sticky=W)
-Label(frame5,text="File Location",font=('Verdana',10,'bold'),width=15).grid(row=0,column=4,sticky=W)
+#Button(frame5, text='File Management', command=lambda: addToFrame5("<Select One>"),width=19).grid(row=0,column=0,sticky=W)
+#Label(frame5,text="Points",font=('Verdana',10,'bold')).grid(row=0,column=1,sticky=W,padx=5)
+#Label(frame5,text="Keywords/Values",font=('Verdana',10,'bold'),width=20).grid(row=0,column=2,sticky=W)
+#Label(frame5,text="Completion Message",font=('Verdana',10,'bold'),width=18).grid(row=0,column=3,sticky=W)
+#Label(frame5,text="File Location",font=('Verdana',10,'bold'),width=15).grid(row=0,column=4,sticky=W)
+###addToFrame5()
 # Label(frame5,text="Contents",font=('Verdana',10,'bold'),width=13).grid(row=0,column=5,sticky=W)
-Label(frame5,text="Explanation ",font=('Verdana',10,'bold')).grid(row=0,column=6,sticky=W)
+#Label(frame5,text="Explanation ",font=('Verdana',10,'bold')).grid(row=0,column=6,sticky=W)
+#nb.add(framed,text = 'main page')
+#nb.add(frame1,text = 'please')
+#nb.pack(expand=1, fill= 'both')
+nb.pack(fill=tkinter.BOTH,expand=1)
 
 loadSave()
 
-frame.update_idletasks()
+
+common.update_idletasks()
 frame1.update_idletasks()
 frame2.update_idletasks()
 frame3.update_idletasks()
