@@ -19,6 +19,17 @@ import db_handler
 # region database for save data
 Settings = db_handler.Settings()
 Categories = db_handler.Categories()
+
+#Vulnerability example: 
+'''
+"Name": {"Definition": 'Define what this vulnerability affects',
+         "Description": 'If needed a description that is shown in the UI is shown',
+         "Checks": If inputs are needed they are placed in here Examples- Name:Str, Status:Str',
+         "Category": Place under one of the four main categories to be displayed in the UI 
+                     Account Management | Local Policy | Program Management | File Management
+}
+'''
+
 vulnerability_template = {"Disable Root": {"Definition": 'Enable this to score the competitor for disabling the Administrator account.',
                                             "Category": 'Account Management'},
                           "Critical Users": {"Definition": 'Enable this to penalize the competitor for removing a user.',
@@ -138,8 +149,8 @@ vulnerability_template = {"Disable Root": {"Definition": 'Enable this to score t
                                                 "Category": 'Program Management'},
                           "Update Check Period": {"Definition": 'What has the update check period been set to? (apt/apt.conf.d/10periodic) \nPlease set Occurance as [minute] [hour] [day of month] [month] [day of week]',
                                             "Category": 'Program Management'},
-                          "Update Auto Install": {"Definition": 'Automaticaly download and install security updates',
-                                                  "Category": 'Program Management'},
+                          #"Update Auto Install": {"Definition": 'Automaticaly download and install security updates',
+                           #                       "Category": 'Program Management'},
                           "Forensic": {"Definition": 'Enable this to score the competitor for answering forensic a question.',
                                        "Description": 'This will score the competitor for answering forensic questions. To add more questions press the "Add" button. To remove questions press the "X" button next to the question you want to remove. The location will automatically be set to the desktop of that is set in the main menu.',
                                        "Checks": 'Question:Str,Answers:Str,Location:Str',
@@ -150,7 +161,6 @@ vulnerability_template = {"Disable Root": {"Definition": 'Enable this to score t
                                        "Category": 'File Management'},
                           "Check Hosts": {"Definition": 'Enable this to score the competitor for clearing the hosts file.',
                                           "Description": 'This will score the competitor for clearing the hosts file. To add more files press the "Add" button. To remove a file press the "X" button next to the file you want to remove. Keep it one file per line.',
-                                          "Checks": 'Text:Str',
                                           "Category": 'File Management'},
                           "Add Text to File": {"Definition": 'Enable this to score the competitor for adding text to a file.',
                                                "Description": 'This will score the competitor for adding text to a file. To add more files press the "Add" button. To remove a file press the "X" button next to the file you want to remove. Keep it one file per line.',
@@ -174,10 +184,10 @@ vulnerability_template = {"Disable Root": {"Definition": 'Enable this to score t
                                             "Description": 'This will score the competitor for removing or disabling a program from the startup. To add more programs press the "Add" button. To remove a program press the "X" button next to the program you want to remove. Keep it one program per line.',
                                             "Checks": 'Program Name:Str',
                                             "Category": 'File Management'},
-                          "Bad Cron": {"Definition": 'Check the root crontab for a specific string ',
-                                            "Description": 'This will score the competitor for removing or disabling a program from the startup. To add more programs press the "Add" button. To remove a program press the "X" button next to the program you want to remove. Keep it one program per line.',
-                                            "Checks": 'String Check:Str',
-                                            "Category": 'File Management'},
+                          #"Bad Cron": {"Definition": 'Check the root crontab for a specific string ',
+                          #                  "Description": 'This will score the competitor for removing or disabling a program from the startup. To add more programs press the "Add" button. To remove a program press the "X" button next to the program you want to remove. Keep it one program per line.',
+                          #                  "Checks": 'String Check:Str',
+                          #                  "Category": 'File Management'},
                           }
 Vulnerabilities = db_handler.OptionTables(vulnerability_template)
 Vulnerabilities.initialize_option_table()

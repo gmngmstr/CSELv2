@@ -129,7 +129,6 @@ def forensic_question(vulnerability):
                         record_miss('Forensic Question')
 
 
-
 #fixed
 def critical_users(vulnerability):
     users = pwd.getpwall()
@@ -200,12 +199,14 @@ def firewallVulns(vulnerability, name):
     except subprocess.CalledProcessError as e:
         return f"Error: {e.stderr}"
 
+
 def check_tcp(host, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(1)  # Set a timeout for the connection attempt
     result = sock.connect_ex((host, port))
     sock.close()
     return result == 0
+
 
 def check_udp(host,port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -218,6 +219,7 @@ def check_udp(host,port):
     except socket.timeout:
         sock.close()
         return False
+
 
 def portVulns(vulnerability):
     for vuln in vulnerability:
@@ -385,7 +387,6 @@ def check_startup(vulnerability):
 
 
 def update_check_period(vulnerability):
-    
     for vuln in vulnerability:
         if vuln != 1:
             with open('/etc/apt/apt.conf.d/10periodic', 'r') as config_file:
@@ -397,6 +398,7 @@ def update_check_period(vulnerability):
                 record_hit('Check Period is set to 1', vulnerability[vuln]['Points'])
             else:
                 record_miss('Program Management')
+
 
 #check
 def add_text_to_file(vulnerability):
@@ -410,6 +412,7 @@ def add_text_to_file(vulnerability):
             else:
                 record_miss('File Management')
 
+
 #check
 def remove_text_from_file(vulnerability):
     for vuln in vulnerability:
@@ -421,7 +424,6 @@ def remove_text_from_file(vulnerability):
                 record_hit(vulnerability[vuln]["Text to Remove"] + ' has been removed from ' + vulnerability[vuln]["File Path"], vulnerability[vuln]["Points"])
             else:
                 record_miss('File Management')
-
 
 
 def start_up_apps(vulnerability):
@@ -451,13 +453,12 @@ def check_hosts(vulnerability):
 
     with open(hosts_file_path, 'r') as file:
         hosts_content = file.read().strip()
-
-    if not hosts_content:
-        record_hit()
-    else:
-        print("Hosts file is not empty.")
-
-
+    for vuln in vulnerability:
+        if vuln != 1:
+            if not hosts_content:
+                record_hit('Hosts file has been cleared',vulnerability[vuln]["Points"])
+            else:
+                record_miss('File Management')
 
 #fix
 def critical_services(vulnerability):
@@ -470,7 +471,6 @@ def critical_services(vulnerability):
 
 
 #fix
-
 def manage_services(vulnerability):
     for vuln in vulnerability:
         if vuln != 1:
@@ -480,8 +480,6 @@ def manage_services(vulnerability):
                     record_hit(name + ' has been ' + vulnerability[vuln]['Service State'] + ' and set to ' + vulnerability[vuln]['Service Start Mode'], vulnerability[vuln]['Points'])
                 else:
                     record_miss('Program Management')
-
-
 
 
 def disable_SSH_Root_Login(vulnerability):
@@ -559,7 +557,7 @@ def permission_checks(vulnerability):
     for vuln in vulnerability:
         if vuln != 1:
             if oct(os.stat(vulnerability[vuln]["File Path"]).st_mode & 0o777) is vulnerability[vuln]["Permissions"]:
-                record_hit('The item ' + vulnerability[vuln]["File Path"] + ' has been removed.', vulnerability[vuln]["Points"])
+                record_hit('The ' + vulnerability[vuln]["File Path"] + " premissions have been updated.", vulnerability[vuln]["Points"])
             else:
                 record_miss('File Management')
 
@@ -595,6 +593,7 @@ def get_file_names_in_directory(directory):
         for filename in filenames:
             file_names.append(filename)
     return file_names
+
 
 def load_programs():
     usr_bin_file_names = get_file_names_in_directory('/usr/bin')
@@ -634,6 +633,7 @@ def load_password_settings():
             password_settings[key.strip()] = value.strip()
     return password_settings
 
+
 def load_services():
 
     # Run the systemctl command to list all services
@@ -664,7 +664,6 @@ def load_services():
         return(service_data)
     else:
         return(result.stderr)
-
 
 
 #check
@@ -876,8 +875,5 @@ while True:
         #sys.exit()
 
 #TODO add Functions:
-#updatecheckperiod    ["Miscellaneous"]["Update Check Period"]
 # updateautoinstall    ["Miscellaneous"]["Update Auto Install"]
-# checkhosts           ["File Management"]["Check Hosts"]
 # taskscheduler        ["Miscellaneous"]["Task Scheduler"]
-# checkstartup         ["Miscellaneous"]["Check Startup"]
