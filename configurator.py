@@ -5,6 +5,7 @@ import time
 import shutil
 import tkinter
 import traceback
+from crontab import CronTab
 import pwd,grp,psutil
 from tkinter import *
 from tkinter import ttk as ttk
@@ -30,9 +31,7 @@ Categories = db_handler.Categories()
 }
 '''
 
-vulnerability_template = {"Disable Root": {"Definition": 'Enable this to score the competitor for disabling the Administrator account.',
-                                            "Category": 'Account Management'},
-                          "Critical Users": {"Definition": 'Enable this to penalize the competitor for removing a user.',
+vulnerability_template = {"Critical Users": {"Definition": 'Enable this to penalize the competitor for removing a user.',
                                              "Description": 'This will penalize the competitor for removing a user. To add more users press the "Add" button. To remove a user press the "X" button next to the user you want to remove. Keep it one user per line. To add users that are not on the computer, then you can Category the user name in the field. Otherwise use the drop down to select a user. Do not make the point value negative.',
                                              "Checks": 'User Name:Str',
                                              "Category": 'Account Management'},
@@ -64,9 +63,10 @@ vulnerability_template = {"Disable Root": {"Definition": 'Enable this to score t
                                                      "Description": 'This will score the competitor for removing a user from a group other than the Administrative group. To add more users press the "Add" button. To remove a user press the "X" button next to the user you want to remove. Keep it one user and group per line. To add users or group that are not on the computer, then you can type the user or group name in the field. Otherwise use the drop down to select a user or group.',
                                                      "Checks": 'User Name:Str,Group Name:Str',
                                                      "Category": 'Account Management'},
-                          "Secure Sudoers": {"Definition": 'Words to be removed from /etc/sudoers file',
-                                             "Checks": 'Banned Sudoers:Str',
-                                             "Category": 'Account Management'},
+                                            #impliment this one
+                          #"Secure Sudoers": {"Definition": 'Words to be removed from /etc/sudoers file',
+                          #                   "Checks": 'Banned Sudoers:Str',
+                          #                   "Category": 'Account Management'},
                           "Turn On Firewall": {"Definition": 'Enable this to score the competitor for turning on the domain firewall. Does not work for Windows Server.',
                                                      "Category": 'Firewall Management'},
                           "Check Port Open": {"Definition": 'Enable this to score the competitor for opening a port. Does not work for Windows Server.',
@@ -91,27 +91,9 @@ vulnerability_template = {"Disable Root": {"Definition": 'Enable this to score t
                                                      "Category": 'Local Policy'},
                           "Password History": {"Definition": 'Enable this to score the competitor for setting the password history between 5 and 10.',
                                                "Category": 'Local Policy'},
-                          "Password Complexity": {"Definition": 'Enable this to score the competitor for enabling password complexity.',
-                                                  "Category": 'Local Policy'},
-                          "Reversible Password Encryption": {"Definition": 'Enable this to score the competitor for disabling reversible encryption.',
-                                                             "Category": 'Local Policy'},
-                          "Audit Account Login": {"Definition": 'Enable this to score the competitor for setting account login audit to success and failure.',
-                                                  "Category": 'Local Policy'},
-                          "Audit Account Management": {"Definition": 'Enable this to score the competitor for setting account management audit to success and failure.',
-                                                       "Category": 'Local Policy'},
-                          "Audit Directory Settings Access": {"Definition": 'Enable this to score the competitor for setting directory settings access audit to success and failure.',
-                                                              "Category": 'Local Policy'},
-                          "Audit Logon Events": {"Definition": 'Enable this to score the competitor for setting login events audit to success and failure.',
-                                                 "Category": 'Local Policy'},
-                          "Audit Object Access": {"Definition": 'Enable this to score the competitor for setting object access audit to success and failure.',
-                                                  "Category": 'Local Policy'},
-                          "Audit Policy Change": {"Definition": 'Enable this to score the competitor for setting policy change audit to success and failure.',
-                                                  "Category": 'Local Policy'},
-                          "Audit Privilege Use": {"Definition": 'Enable this to score the competitor for setting privilege use audit to success and failure.',
-                                                  "Category": 'Local Policy'},
-                          "Audit Process Tracking": {"Definition": 'Enable this to score the competitor for setting process tracking audit to success and failure.',
-                                                     "Category": 'Local Policy'},
-                          "Audit System Events": {"Definition": 'Enable this to score the competitor for setting system events audit to success and failure.',
+                          #"Password Complexity": {"Definition": 'Enable this to score the competitor for enabling password complexity.',
+                          #                        "Category": 'Local Policy'},
+                          "Audit": {"Definition": 'Enable this to score the competitor for setting account login audit to success and failure.',
                                                   "Category": 'Local Policy'},
                           "Disable SSH Root Login": {"Definition": '\'PermitRootLogin no\' exists in sshd_config',
                                                      "Category": 'Local Policy'},
@@ -135,6 +117,7 @@ vulnerability_template = {"Disable Root": {"Definition": 'Enable this to score t
                           #                   "Description": '(WIP)This will score the competitor for removing a feature. To add more features press the "Add" button. To remove a feature press the "X" button next to the feature you want to remove. Keep it one feature per line.',
                           #                   "Checks": 'Feature Name:Str',
                           #                   "Category": 'Program Management'},
+                                            #crit is active services is passive   
                           "Critical Services": {"Definition": 'Enable this to penalize the competitor for modifying a services run ability.',
                                                 "Description": 'This will penalize the competitor for modifying a services run ability. To add more services press the "Add" button. To remove a service press the "X" button next to the service you want to remove. Keep it one service per line.',
                                                 "Checks": 'Service Name:Str,Service State:Str,Service Start Mode:Str',
@@ -145,7 +128,8 @@ vulnerability_template = {"Disable Root": {"Definition": 'Enable this to score t
                                        "Category": 'Program Management'},
                           "Check Kernel": {"Definition": 'Has kernel been updated?',
                                        "Category": 'Local Policy'},
-                          "Critical Services": {"Definition": 'Enable this to penalize',
+                          "Critical Programs": {"Definition": 'Enable this to penalize',
+                                                "Checks": 'Program Name:Str,Service Start Mode:Str',
                                                 "Category": 'Program Management'},
                           "Update Check Period": {"Definition": 'What has the update check period been set to? (apt/apt.conf.d/10periodic) \nPlease set Occurance as [minute] [hour] [day of month] [month] [day of week]',
                                             "Category": 'Program Management'},
@@ -290,7 +274,6 @@ class Config(Tk):
         ttk.Label(MainPage, text="Total Vulnerabilities:").grid(row=6, column=0, rowspan=4)
         ttk.Label(MainPage, textvariable=self.MenuSettings["Tally Vulnerabilities"], font='Verdana 10 bold', wraplength=150).grid(row=6, column=1)
         ttk.Label(MainPage, text="Created by Shaun Martin, Anthony Nguyen, Bryan Ortiz and Minh-Khoi Do").grid(row=10, column=0, columnspan=4, sticky=SW)
-      #  ttk.Label(MainPage, text="Feedback welcome email to smartin94@student.cccd.edu Subject=CSEW").grid(row=8, column=0, columnspan=6, sticky=S)
         MainPage.columnconfigure(tuple(range(10)), weight=1)
         #MainPage.rowconfigure(tuple(range(5)), weight=1)
 
@@ -522,7 +505,6 @@ def remove_row(entry, idx, widget):
     del entry[idx]
     widget.destroy()
 
-#fix
 def set_file_or_directory(var, switch, mode):
     if switch.get() == 1:
         file = filedialog.askdirectory()
@@ -553,42 +535,67 @@ def create_forensic():
                 g.write(qHeader + vuln_settings["Forensic"][question]["Checks"]["Question"].get() + qFooter)
                 g.close()
 
+def resource_path(relative_path):
+    """ https://stackoverflow.com/questions/7674790/bundling-data-files-with-pyinstaller-onefile/13790741#13790741
+    Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS + "\\extras"
+        if not os.path.exists(os.path.join(base_path, relative_path)):
+            base_path = os.path.abspath("/")
+    except Exception:
+        base_path = os.path.abspath("/")
+    
+    return os.path.join(base_path, relative_path)
+
 
 def commit_config():
 
     save_config()
 
     #check
-    output_directory = '/home/CyberPatriot/'
+    output_directory = '/etc/CYBERPATRIOT/'
+    current_directory = os.getcwd()
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
+    '''
+    shutil.copy(current_directory + '/CCC_logo.png', output_directory + 'CCC_logo.png')
+    shutil.copy(current_directory + '/SoCalCCCC.png', output_directory + 'SoCalCCCC.png')
+    shutil.copy(current_directory + '/scoring_engine_logo_windows_icon_5TN_icon.ico', output_directory + 'scoring_engine_logo_windows_icon_5TN_icon.ico')
+    shutil.copy(current_directory + '/scoring_engine.py', output_directory + 'scoring_engine.py')
+    os.chmod(output_directory + 'scoring_engine.py', 0o777)
+    '''
     shutil.copy(resource_path('CCC_logo.png'), os.path.join(output_directory, 'CCC_logo.png'))
     shutil.copy(resource_path('SoCalCCCC.png'), os.path.join(output_directory, 'SoCalCCCC.png'))
     shutil.copy(resource_path('scoring_engine_logo_windows_icon_5TN_icon.ico'), os.path.join(output_directory, 'scoring_engine_logo_windows_icon_5TN_icon.ico'))
     shutil.copy(resource_path('scoring_engine.exe'), os.path.join(output_directory, 'scoring_engine.exe'))
-
+    
+    cron = CronTab(user=os.environ['USER'])
+    command = output_directory + 'scoring_engine.py'
+    schedule = '*/5 * * * *'
+    
     #fix / check
-    r = open(r'\\home\\CyberPatriot\\RunScoring.bin', 'w+')
-    r.write('@echo off\ncd C:\\CyberPatriot\n start paload')
-    r.close()
-    r.close()
-    s = open(r'\\home\\CyberPatriot\\Repeat.bin', 'w+')
-    s.write('tasklist /nh /fi "imagename eq scoring_engine.exe" | find /i "scoring_engine.exe" > nul || (cd C:\\CyberPatriot\ncall RunScoring.bat) > nul')
-    s.close()
-    #os.system('schtasks /create /SC ONSTART /TN ScoringEngine /TR C:\\CyberPatriot\\RunScoring.bat /RL HIGHEST /F  /quiet')
-    #os.system('schtasks /create /SC MINUTE /MO 2 /TN RepeatScore /TR C:\\CyberPatriot\\Repeat.bat /RL HIGHEST /F  /quiet')
-    #CUT
-    subprocess.Popen(['./install.sh'])
-    #fix
-    #subprocess.call('schtasks /create /SC ONSTART /TN ScoringEngine /TR C:\\CyberPatriot\\RunScoring.bat /RL HIGHEST /F', creationflags=subprocess.CREATE_NO_WINDOW)
-    #subprocess.call('schtasks /create /SC MINUTE /MO 2 /TN RepeatScore /TR C:\\CyberPatriot\\Repeat.bat /RL HIGHEST /F', creationflags=subprocess.CREATE_NO_WINDOW)
-    time.sleep(2)
-    sys.exit()
+    try:
+        # Create a new cron job
+        job = cron.new(command=command, comment='my_cron_job')
+
+        # Set the schedule for the cron job
+        job.setall(schedule)
+
+        # Write the job to the crontab
+        job.enable()
+
+        # Write the changes to the crontab
+        cron.write()
+    except subprocess.CalledProcessError as e:
+        show_error(e)
+
+
 
 #check
 def save_config():
-    if "\\Desktop\\" not in root.MenuSettings["Desktop"].get():
-        root.MenuSettings["Desktop"].set(os.path.expanduser("~") + "\\Desktop\\")
+    if "/home/b/Desktop" not in root.MenuSettings["Desktop"].get():
+        root.MenuSettings["Desktop"].set("/home/" + os.environ.get('SUDO_USER') + "/Desktop/")
     create_forensic()
     tally()
     Settings.update_table(root.MenuSettings)
@@ -646,19 +653,7 @@ def show_error(self, *args):
             err = 'There is an integer error with one of the points'
     messagebox.showerror('Exception', err)
 
-#fix
-def resource_path(relative_path):
-    """ https://stackoverflow.com/questions/7674790/bundling-data-files-with-pyinstaller-onefile/13790741#13790741
-    Get absolute path to resource, works for dev and for PyInstaller """
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS + "//extras"
-        if not os.path.exists(os.path.join(base_path, relative_path)):
-            base_path = os.path.abspath("~")
-    except Exception:
-        base_path = os.path.abspath("/")
 
-    return os.path.join(base_path, relative_path)
 
 def change_theme(style_array):
     root.ttkStyle.set_theme(style_array.get())

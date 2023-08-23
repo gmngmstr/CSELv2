@@ -10,11 +10,10 @@ try:
     # PyInstaller creates a temp folder and stores path in _MEIPASS
     base_path = sys._MEIPASS
     passExist = True
-    base_path = '/home/CyberPatriot/'
     if not os.path.exists(base_path):
         os.makedirs(base_path)
 except Exception:
-    base_path = os.path.abspath("")
+    base_path = os.path.abspath(".")
     passExist = False
 db = os.path.join(base_path, 'save_data.db')
 
