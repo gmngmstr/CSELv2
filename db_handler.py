@@ -8,12 +8,12 @@ from tkinter import StringVar, IntVar
 
 try:
     # PyInstaller creates a temp folder and stores path in _MEIPASS
-    base_path = sys._MEIPASS
+    base_path = os.path.abspath('/etc/CYBERPATRIOT/')
     passExist = True
     if not os.path.exists(base_path):
         os.makedirs(base_path)
 except Exception:
-    base_path = os.path.abspath(".")
+    base_path = os.path.abspath('/etc/CYBERPATRIOT/')
     passExist = False
 db = os.path.join(base_path, 'save_data.db')
 

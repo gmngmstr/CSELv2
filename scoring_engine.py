@@ -744,8 +744,8 @@ prePoints = 0
 category_def = {"Account Management": account_management, "Local Policy": local_policies, "Program Management": program_management, "File Management": file_management, "Firewall Management": firewall_management}
 Desktop = menuSettings["Desktop"]
 #fix
-index = '/home/CyberPatriot/'
-scoreIndex = index + 'ScoreReport.html'
+index = os.environ['PWD']
+scoreIndex = index + '/ScoreReport.html'
 
 # --------- Main Loop ---------#
 check_runas()

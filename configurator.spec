@@ -8,7 +8,7 @@ a = Analysis(
     ['configurator.py'],
     pathex=[],
     binaries=[],
-    datas=[('scoring_engine', 'extras'), ('scoring_engine_logo_windows_icon_5TN_icon.ico', 'extras'), ('CCC_logo.png', 'extras'), ('SoCalCCCC.png', 'extras')],
+    datas=[('scoring_engine', 'extras'), ('CCC_logo.png', 'extras'), ('SoCalCCCC.png', 'extras')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -41,5 +41,4 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['scoring_engine_logo_windows_icon_5TN_icon.ico'],
 )

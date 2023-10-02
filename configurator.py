@@ -540,7 +540,7 @@ def resource_path(relative_path):
     Get absolute path to resource, works for dev and for PyInstaller """
     try:
         # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS + "\\extras"
+        base_path = sys._MEIPASS + "/extras"
         if not os.path.exists(os.path.join(base_path, relative_path)):
             base_path = os.path.abspath("/")
     except Exception:
@@ -567,11 +567,10 @@ def commit_config():
     '''
     shutil.copy(resource_path('CCC_logo.png'), os.path.join(output_directory, 'CCC_logo.png'))
     shutil.copy(resource_path('SoCalCCCC.png'), os.path.join(output_directory, 'SoCalCCCC.png'))
-    shutil.copy(resource_path('scoring_engine_logo_windows_icon_5TN_icon.ico'), os.path.join(output_directory, 'scoring_engine_logo_windows_icon_5TN_icon.ico'))
-    shutil.copy(resource_path('scoring_engine.exe'), os.path.join(output_directory, 'scoring_engine.exe'))
+    shutil.copy(resource_path('scoring_engine'), os.path.join(output_directory, 'scoring_engine'))
     
     cron = CronTab(user=os.environ['USER'])
-    command = output_directory + 'scoring_engine.py'
+    command = output_directory + 'scoring_engine'
     schedule = '*/5 * * * *'
     
     #fix / check
