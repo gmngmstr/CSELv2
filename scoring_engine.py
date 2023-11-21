@@ -14,13 +14,13 @@ import pwd,grp
 import lsb_release
 import platform
 import configparser
-
+from pwd import getpwnam
 #check
 # Scoring Report creation
 def draw_head():
     file = open(scoreIndex, 'w+')
     file.write('<!doctype html><html><head><title>CSEW Score Report</title><meta http-equiv="refresh" content="60"></head><body style="background-color:powderblue;">''\n')
-    file.write('<table align="center" cellpadding="10"><tr><td><img src="C:/CyberPatriot/CCC_logo.png"></td><td><div align="center"><H2>Cyberpatriot Scoring Engine:Windows v1.1</H2></div></td><td><img src="C:/CyberPatriot/SoCalCCCC.png"></td></tr></table>If you see this wait a few seconds then refresh<br><H2>Your Score: #TotalScore#/' + str(menuSettings["Tally Points"]) + '</H2><H2>Vulnerabilities: #TotalVuln#/' + str(menuSettings["Tally Vulnerabilities"]) + '</H2><hr>')
+    file.write('<table align="center" cellpadding="10"><tr><td><img src="C:/CyberPatriot/CCC_logo.png"></td><td><div align="center"><H2>Cyberpatriot Scoring Engine:Linux v1.1</H2></div></td><td><img src="C:/CyberPatriot/SoCalCCCC.png"></td></tr></table>If you see this wait a few seconds then refresh<br><H2>Your Score: #TotalScore#/' + str(menuSettings["Tally Points"]) + '</H2><H2>Vulnerabilities: #TotalVuln#/' + str(menuSettings["Tally Vulnerabilities"]) + '</H2><hr>')
     file.close()
 
 
@@ -55,28 +55,13 @@ def create_desktop_shortcut(name, target_path, icon_path=None):
     with open(desktop_file_path, 'w') as desktop_file:
         desktop_file.write(desktop_file_content)
 
-        print(f"Desktop shortcut '{name}' has been created at {desktop_file_path}")
-
-# Usage
-create_desktop_shortcut("My Shortcut", "/path/to/target/executable", "/path/to/icon/icon.png")
 
 def draw_tail():
     write_to_html('<hr><div align="center"><b>Coastline College</b>')
     replace_section(scoreIndex, '#TotalScore#', str(total_points))
     replace_section(scoreIndex, '#TotalVuln#', str(total_vulnerabilities))
     replace_section(scoreIndex, 'If you see this wait a few seconds then refresh', '')
-    #check
-    path = os.path.join(Desktop, 'ScoreReport.lnk')
-    target = scoreIndex
-    icon = os.path.join(index, 'scoring_engine_logo_windows_icon_5TN_icon.ico')
-    #fix
-    shell = win32com.client.Dispatch("WScript.Shell")
-    shortcut = shell.CreateShortCut(path)
-    shortcut.Targetpath = target
-    shortcut.IconLocation = icon
-    shortcut.WindowStyle = 7  # 7 - Minimized, 3 - Maximized, 1 - Normal
-    shortcut.save()
-
+    create_desktop_shortcut('ScoringReport',scoreIndex,index + '/Scoring Engine Linux Big.png')
 
 # Extra Functions
 def check_runas():
@@ -88,18 +73,30 @@ def check_runas():
 def check_score():
     global total_points, total_vulnerabilities
     try:
-
+        current_user = os.getlogin()
+        getpwnam(current_user).pw_uid
         menuSettings["Current Vulnerabilities"] = total_vulnerabilities
         if total_points > menuSettings["Current Points"]:
             menuSettings["Current Points"] = total_points
             Settings.update_score(menuSettings)
-            w.ShowWindow('Score Update', 'You gained points!!')
+            subprocess.run(['sudo', '-u', os.environ['SUDO_USER'], 'DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/{}/bus'.format(getpwnam(current_user).pw_uid), 
+                    'notify-send', '-i', 'utilities-terminal', 'CyberPatriot', 'You\'ve gained points!'],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    check=True) 
         elif total_points < menuSettings["Current Points"]:
             menuSettings["Current Points"] = total_points
             Settings.update_score(menuSettings)
-            w.ShowWindow('Score Update', 'You lost points!!')
-        if total_points == menuSettings["Tally Points"] and total_vulnerabilities == menuSettings["Tally Vulnerabilities"]:
-            w.ShowWindow('Image Completed', 'Congratulations you finished the image.')
+            subprocess.run(['sudo', '-u', os.environ['SUDO_USER'], 'DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/{}/bus'.format(getpwnam(current_user).pw_uid), 
+                    'notify-send', '-i', 'utilities-terminal', 'CyberPatriot', 'You\'ve lost points!'], stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    check=True)
+            if total_points == menuSettings["Tally Points"] and total_vulnerabilities == menuSettings["Tally Vulnerabilities"]:
+                subprocess.run(['sudo', '-u', os.environ['SUDO_USER'], 'DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/{}/bus'.format(getpwnam(current_user).pw_uid), 
+                    'notify-send', '-i', 'utilities-terminal', 'CyberPatriot', 'You\'ve completed the image!'],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    check=True)
     except:
         #check
         f = open('scoring_engine.log', 'w')
@@ -111,6 +108,19 @@ def check_score():
         messagebox.showerror('Crash Report','The scoring engine has stopped working, a log has been saved to ' + os.path.abspath('scoring_engine.log'))
         # sys.exit()
 
+def display_html_sh():
+    command = (f'''
+#!/bin/bash
+html_file={scoreIndex}
+
+# Change desktop icon (assuming GNOME desktop environment) silently
+gio set \"$html_file\" metadata::custom-icon  &> /dev/null
+
+# Change desktop icon (assuming GNOME desktop environment)
+gio set "$html_file" metadata::custom-icon file://{index}/ScoringEngineLinuxBig.png
+    ''')
+
+    subprocess.run(command, shell=True, capture_output=True, text=True)
 
 def write_to_html(message):
     file = open(scoreIndex, 'a')
@@ -677,11 +687,9 @@ def program_management(vulnerabilities):
                 vulnerability_def[vuln.name](vulnerability, vuln.name)
 
 
-#check1
 def file_management(vulnerabilities):
     write_to_html('<H3>FILE MANAGEMENT</H3>')
     vulnerability_def = {"Forensic": forensic_question, "Check Hosts": check_hosts, "Bad File": bad_file, "Add Text to File": add_text_to_file, "Remove Text From File": remove_text_from_file, "File Permissions": permission_checks, "Check Startup":start_up_apps}
-    #vulnerability_def = {"Forensic": forensic_question, "Bad File": bad_file, "Check Hosts": no_scoring_available, "Add Text to File": add_text_to_file, "Remove Text From File": remove_text_from_file}
     for vuln in vulnerabilities:
         vulnerability = Vulnerabilities.get_option_table(vuln.name, False)
         if vulnerability[1]["Enabled"]:
@@ -690,8 +698,6 @@ def file_management(vulnerabilities):
             else:
                 vulnerability_def[vuln.name](vulnerability, vuln.name)
 
-
-#check1
 def firewall_management(vulnerabilities):
     write_to_html('<H3>FIREWALL MANAGEMENT</H3>')
     vulnerabilities
@@ -704,9 +710,6 @@ def firewall_management(vulnerabilities):
             else:
                 vulnerability_def[vuln.name](vulnerability, vuln.name)
 
-
-
-#check1
 def critical_functions(vulnerabilities):
     write_to_html('<H4>Critical Functions:</H4>')
     vulnerability_def = {"Critical Users": critical_users, "Critical Programs": critical_programs, "Critical Services": critical_services}
@@ -744,7 +747,7 @@ prePoints = 0
 category_def = {"Account Management": account_management, "Local Policy": local_policies, "Program Management": program_management, "File Management": file_management, "Firewall Management": firewall_management}
 Desktop = menuSettings["Desktop"]
 #fix
-index = os.environ['PWD']
+index = '/etc/CYBERPATRIOT'
 scoreIndex = index + '/ScoreReport.html'
 
 # --------- Main Loop ---------#

@@ -31,6 +31,7 @@ Categories = db_handler.Categories()
 }
 '''
 
+
 vulnerability_template = {"Critical Users": {"Definition": 'Enable this to penalize the competitor for removing a user.',
                                              "Description": 'This will penalize the competitor for removing a user. To add more users press the "Add" button. To remove a user press the "X" button next to the user you want to remove. Keep it one user per line. To add users that are not on the computer, then you can Category the user name in the field. Otherwise use the drop down to select a user. Do not make the point value negative.',
                                              "Checks": 'User Name:Str',
