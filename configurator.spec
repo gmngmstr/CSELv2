@@ -8,7 +8,7 @@ a = Analysis(
     ['configurator.py'],
     pathex=[],
     binaries=[],
-    datas=[('scoring_engine', 'extras'), ('CCC_logo.png', 'extras'), ('SoCalCCCC.png', 'extras')],
+    datas=[('scoring_engine', 'extras'), ('CCC_logo.png', 'extras'), ('ScoringEngineLinuxBig.png', 'extras'), ('iguana.png', 'extras'), ('logo.png', 'extras'), ('SoCalCCCC.png', 'extras')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
