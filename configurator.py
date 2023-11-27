@@ -575,26 +575,28 @@ def commit_config():
     schedule = '*/5 * * * *'
     
     #fix / check
-    try:
-        # Create a new cron job
-        job = cron.new(command=command, comment='my_cron_job')
+    if command not in cron:    
+        try:
+            # Create a new cron job
+            job = cron.new(command=command, comment='my_cron_job')
 
-        # Set the schedule for the cron job
-        job.setall(schedule)
+            # Set the schedule for the cron job
+            job.setall(schedule)
 
-        # Write the job to the crontab
-        job.enable()
+            # Write the job to the crontab
+            job.enable()
 
-        # Write the changes to the crontab
-        cron.write()
-    except subprocess.CalledProcessError as e:
-        show_error(e)
+            # Write the changes to the crontab
+            cron.write()
+        except subprocess.CalledProcessError as e:
+            show_error(e)
 
 
 
 #check
 def save_config():
-    if "/home/b/Desktop" not in root.MenuSettings["Desktop"].get():
+    desk = f'/home/{os.environ.get("SUDO_USER")}/Desktop'
+    if desk not in root.MenuSettings["Desktop"].get():
         root.MenuSettings["Desktop"].set("/home/" + os.environ.get('SUDO_USER') + "/Desktop/")
     create_forensic()
     tally()
