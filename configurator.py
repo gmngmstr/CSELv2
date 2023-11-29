@@ -569,7 +569,8 @@ def commit_config():
     shutil.copy(resource_path('CCC_logo.png'), os.path.join(output_directory, 'CCC_logo.png'))
     shutil.copy(resource_path('SoCalCCCC.png'), os.path.join(output_directory, 'SoCalCCCC.png'))
     shutil.copy(resource_path('scoring_engine'), os.path.join(output_directory, 'scoring_engine'))
-    
+    shutil.copy(resource_path('ScoringEngineLinuxBig.png'), os.path.join(output_directory + 'scoring_engine.py'))
+    os.chmod(output_directory + 'scoring_engine', 0o777)
     cron = CronTab(user=os.environ['USER'])
     command = output_directory + 'scoring_engine'
     schedule = '*/5 * * * *'

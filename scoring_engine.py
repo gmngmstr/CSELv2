@@ -42,26 +42,23 @@ def record_penalty(name, points):
     total_points -= int(points)
 
 
-def create_desktop_shortcut(name, target_path, icon_path=None):
-    desktop_file_content = f"""[Desktop Entry]
-    Name={name}
-    Exec={target_path}
-    Icon={icon_path if icon_path else 'application-default-icon'}
-    Type=Application
-    """
+def display_html_sh():
+    command = (f'''
+#!/bin/bash
+html_file={scoreIndex}
 
-    desktop_file_path = f"~/Desktop/{name}.desktop"  # Change this path as needed
+gio set \"$html_file\" metadata::custom-icon  &> /dev/null
 
-    with open(desktop_file_path, 'w') as desktop_file:
-        desktop_file.write(desktop_file_content)
 
+gio set "$html_file" metadata::custom-icon file://{index}/ScoringEngineLinuxBig.png
+    ''')
 
 def draw_tail():
     write_to_html('<hr><div align="center"><b>Coastline College</b>')
     replace_section(scoreIndex, '#TotalScore#', str(total_points))
     replace_section(scoreIndex, '#TotalVuln#', str(total_vulnerabilities))
     replace_section(scoreIndex, 'If you see this wait a few seconds then refresh', '')
-    create_desktop_shortcut('ScoringReport',scoreIndex,index + '/Scoring Engine Linux Big.png')
+    display_html_sh()
 
 # Extra Functions
 def check_runas():
@@ -108,17 +105,6 @@ def check_score():
         messagebox.showerror('Crash Report','The scoring engine has stopped working, a log has been saved to ' + os.path.abspath('scoring_engine.log'))
         # sys.exit()
 
-def display_html_sh():
-    command = (f'''
-#!/bin/bash
-html_file={scoreIndex}
-
-# Change desktop icon (assuming GNOME desktop environment) silently
-gio set \"$html_file\" metadata::custom-icon  &> /dev/null
-
-# Change desktop icon (assuming GNOME desktop environment)
-gio set "$html_file" metadata::custom-icon file://{index}/ScoringEngineLinuxBig.png
-    ''')
 
     subprocess.run(command, shell=True, capture_output=True, text=True)
 
