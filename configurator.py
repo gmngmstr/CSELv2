@@ -725,7 +725,6 @@ Tk.report_callback_exception = show_error
 vulnerability_settings = {}
 themeList = ["aquativo", "aquativo", "black", "clearlooks", "elegance", "equilux", "keramik", "plastik", "ubuntu"]
 
-#wmi = WMI()
 
 root = Config()
 root.title('Configurator')
