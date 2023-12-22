@@ -569,11 +569,13 @@ def commit_config():
     shutil.copy(resource_path('CCC_logo.png'), os.path.join(output_directory, 'CCC_logo.png'))
     shutil.copy(resource_path('SoCalCCCC.png'), os.path.join(output_directory, 'SoCalCCCC.png'))
     shutil.copy(resource_path('scoring_engine'), os.path.join(output_directory, 'scoring_engine'))
-    shutil.copy(resource_path('ScoringEngineLinuxBig.png'), os.path.join(output_directory + 'scoring_engine.py'))
+    shutil.copy(resource_path('ScoringEngineLinuxBig.png'), output_directory + 'ScoringEngineLinuxBig.png')
+    shutil.copy(resource_path('ScoringEngineLinuxBig.png'), output_directory + 'ScoringEngineLinuxBig.png')
     os.chmod(output_directory + 'scoring_engine', 0o777)
+
     cron = CronTab(user=os.environ['USER'])
     command = output_directory + 'scoring_engine'
-    schedule = '*/5 * * * *'
+    schedule = '* * * * *'
     
     #fix / check
     if command not in cron:    
@@ -589,9 +591,25 @@ def commit_config():
 
             # Write the changes to the crontab
             cron.write()
+           
+            job = cron.new(command=command, comment='my_cron_job')
+            # Create a new cron job
+
+            # Set the schedule for the cron job
+            job.setall('@reboot')
+
+            # Write the job to the crontab
+            job.enable()
+
+            # Write the changes to the crontab
+            cron.write()
         except subprocess.CalledProcessError as e:
             show_error(e)
-
+    for proc in psutil.process_iter(['name']):
+       if proc.info['name'] == 'scoring_engine':
+           sys.exit()
+    subprocess.Popen(command, shell=True)
+    sys.exit()
 
 
 #check

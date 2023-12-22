@@ -15,12 +15,13 @@ import lsb_release
 import platform
 import configparser
 from pwd import getpwnam
+import shutil
 #check
 # Scoring Report creation
 def draw_head():
     file = open(scoreIndex, 'w+')
-    file.write('<!doctype html><html><head><title>CSEW Score Report</title><meta http-equiv="refresh" content="60"></head><body style="background-color:powderblue;">''\n')
-    file.write('<table align="center" cellpadding="10"><tr><td><img src="C:/CyberPatriot/CCC_logo.png"></td><td><div align="center"><H2>Cyberpatriot Scoring Engine:Linux v1.1</H2></div></td><td><img src="C:/CyberPatriot/SoCalCCCC.png"></td></tr></table>If you see this wait a few seconds then refresh<br><H2>Your Score: #TotalScore#/' + str(menuSettings["Tally Points"]) + '</H2><H2>Vulnerabilities: #TotalVuln#/' + str(menuSettings["Tally Vulnerabilities"]) + '</H2><hr>')
+    file.write('<!doctype html><html><head><title>CSEL Score Report</title><meta http-equiv="refresh" content="60"></head><body style="background-color:powderblue;">''\n')
+    file.write('<table align="center" cellpadding="10"><tr><td><img src="file:///CYBERPATRIOT/CCC_logo.png"></td><td><div align="center"><H2>Cyberpatriot Scoring Engine:Linux v1.1</H2></div></td><td><img src="file:///CYBERPATRIOT/SoCalCCCC.png"></td></tr></table>If you see this wait a few seconds then refresh<br><H2>Your Score: #TotalScore#/' + str(menuSettings["Tally Points"]) + '</H2><H2>Vulnerabilities: #TotalVuln#/' + str(menuSettings["Tally Vulnerabilities"]) + '</H2><hr>')
     file.close()
 
 
@@ -53,11 +54,16 @@ gio set \"$html_file\" metadata::custom-icon  &> /dev/null
 gio set "$html_file" metadata::custom-icon file://{index}/ScoringEngineLinuxBig.png
     ''')
 
+    subprocess.run(command, shell=True, capture_output=True, text=True)
+
 def draw_tail():
     write_to_html('<hr><div align="center"><b>Coastline College</b>')
     replace_section(scoreIndex, '#TotalScore#', str(total_points))
     replace_section(scoreIndex, '#TotalVuln#', str(total_vulnerabilities))
     replace_section(scoreIndex, 'If you see this wait a few seconds then refresh', '')
+    os.chmod(scoreIndex, 0o777)
+    os.chown (scoreIndex, int(os.environ['SUDO_UID']), int(os.environ['SUDO_UID']))
+    shutil.move('/etc/CYBERPATRIOT/ScoreReport.html', '/home/'+ os.environ['SUDO_USER'] + '/Desktop/')
     display_html_sh()
 
 # Extra Functions
@@ -95,18 +101,12 @@ def check_score():
                     stderr=subprocess.PIPE,
                     check=True)
     except:
-        #check
         f = open('scoring_engine.log', 'w')
         e = traceback.format_exc()
-        #if "KeyboardInterrupt" in e:
-        #sys.exit()
         f.write(str(e))
         f.close()
         messagebox.showerror('Crash Report','The scoring engine has stopped working, a log has been saved to ' + os.path.abspath('scoring_engine.log'))
-        # sys.exit()
-
-
-    subprocess.run(command, shell=True, capture_output=True, text=True)
+        sys.exit()
 
 def write_to_html(message):
     file = open(scoreIndex, 'a')
@@ -151,12 +151,11 @@ def critical_users(vulnerability):
                 record_penalty(vulnerability[vuln]['User Name'] + ' was removed.', vulnerability[vuln]['Points'])
 
 
-#fix
 def users_manipulation(vulnerability, name):
-    users = pwd.getgrall()
+    users = grp.getgrall()
     user_list = []
     for user in users:
-        user_list.append(user)[0]
+        user_list.append(user[0])
     if name == "Add User":
         for vuln in vulnerability:
             if vuln != 1:
@@ -172,7 +171,6 @@ def users_manipulation(vulnerability, name):
                 else:
                     record_miss('Account Management')
 
-#fix
 def firewallVulns(vulnerability, name):
     try:
         # Run the ufw status command and capture the output
@@ -610,19 +608,23 @@ def load_services():
         # Split the output into lines
         services_lines = services_output.splitlines()
         
+
+        service_data = []
         # Process each line and create a dictionary
         for line in services_lines:
             words = line.split()
-            
-            # Define dictionary keys and extract values from words
-            service_data = {
-                "unit": words[0],
-                "load": words[1],
-                "active": words[2],
-                "sub": words[3],
-                "description": ' '.join(words[4:])
-            }
-            
+            if words == []:
+                break
+            else:
+                # Define dictionary keys and extract values from words
+                service = {
+                        "unit": words[0],
+                        "load": words[1],
+                        "active": words[2],
+                        "sub": words[3],
+                        "description": ' '.join(words[4:])
+                        }
+                service_data.append(service)
         # Print the dictionary for the current line
         return(service_data)
     else:
@@ -706,7 +708,7 @@ def critical_functions(vulnerabilities):
 
 '''
 def policyCreation():
-      with open('/etc/login.defs', 'r') as source, open(destination_file, 'w') as destination:
+    with open('/etc/login.defs', 'r') as source, open(destination_file, 'w') as destination:
         for line in source:
             if not line.strip().startswith("#"):
                 destination.write(line)
