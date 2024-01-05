@@ -21,7 +21,7 @@ import shutil
 def draw_head():
     file = open(scoreIndex, 'w+')
     file.write('<!doctype html><html><head><title>CSEL Score Report</title><meta http-equiv="refresh" content="60"></head><body style="background-color:powderblue;">''\n')
-    file.write('<table align="center" cellpadding="10"><tr><td><img src="file:///CYBERPATRIOT/CCC_logo.png"></td><td><div align="center"><H2>Cyberpatriot Scoring Engine:Linux v1.1</H2></div></td><td><img src="file:///CYBERPATRIOT/SoCalCCCC.png"></td></tr></table>If you see this wait a few seconds then refresh<br><H2>Your Score: #TotalScore#/' + str(menuSettings["Tally Points"]) + '</H2><H2>Vulnerabilities: #TotalVuln#/' + str(menuSettings["Tally Vulnerabilities"]) + '</H2><hr>')
+    file.write('<table align="center" cellpadding="10"><tr><td><img src="file:///var/www/CYBERPATRIOT/CCC_logo.png"></td><td><div align="center"><H2>Cyberpatriot Scoring Engine:Linux v1.1</H2></div></td><td><img src="file:///var/www/CYBERPATRIOT/SoCalCCCC.png"></td></tr></table>If you see this wait a few seconds then refresh<br><H2>Your Score: #TotalScore#/' + str(menuSettings["Tally Points"]) + '</H2><H2>Vulnerabilities: #TotalVuln#/' + str(menuSettings["Tally Vulnerabilities"]) + '</H2><hr>')
     file.close()
 
 
@@ -43,18 +43,15 @@ def record_penalty(name, points):
     total_points -= int(points)
 
 
-def display_html_sh():
-    command = (f'''
-#!/bin/bash
-html_file={scoreIndex}
-
-gio set \"$html_file\" metadata::custom-icon  &> /dev/null
-
-
-gio set "$html_file" metadata::custom-icon file://{index}/ScoringEngineLinuxBig.png
-    ''')
-
-    subprocess.run(command, shell=True, capture_output=True, text=True)
+def display_html_sh(path):
+    with open(path + 'ScoringReport.desktop', 'w') as dt_f:
+        dt_f.write('''[Desktop Entry]
+Name = Scoring Report
+Exec = xdg-open /var/www/CYBERPATRIOT/ScoreReport.html
+Icon = /var/www/CYBERPATRIOT/ScoringEngineLinuxBig.png
+Type = Application
+Categories = Development;HTML;
+Terminal = false''')
 
 def draw_tail():
     write_to_html('<hr><div align="center"><b>Coastline College</b>')
@@ -63,8 +60,12 @@ def draw_tail():
     replace_section(scoreIndex, 'If you see this wait a few seconds then refresh', '')
     os.chmod(scoreIndex, 0o777)
     os.chown (scoreIndex, int(os.environ['SUDO_UID']), int(os.environ['SUDO_UID']))
-    shutil.move('/etc/CYBERPATRIOT/ScoreReport.html', '/home/'+ os.environ['SUDO_USER'] + '/Desktop/')
-    display_html_sh()
+    #shutil.copy('/var/www/CYBERPATRIOT/ScoreReport.html', '/home/'+ os.environ['SUDO_USER'] + '/Desktop/')
+    #os.chown ( '/home/'+ os.environ['SUDO_USER'] + '/Desktop/ScoreReport.html', int(os.environ['SUDO_UID']), int(os.environ['SUDO_UID']))
+    display_html_sh('/home/'+ os.environ['SUDO_USER'] + '/Desktop/')
+    os.chown ('/home/'+ os.environ['SUDO_USER'] + '/Desktop/ScoringReport.desktop', int(os.environ['SUDO_UID']), int(os.environ['SUDO_UID']))
+    os.chmod('/home/'+ os.environ['SUDO_USER'] + '/Desktop/ScoringReport.desktop',0o770)
+
 
 # Extra Functions
 def check_runas():
@@ -735,7 +736,7 @@ prePoints = 0
 category_def = {"Account Management": account_management, "Local Policy": local_policies, "Program Management": program_management, "File Management": file_management, "Firewall Management": firewall_management}
 Desktop = menuSettings["Desktop"]
 #fix
-index = '/etc/CYBERPATRIOT'
+index = '/var/www/CYBERPATRIOT'
 scoreIndex = index + '/ScoreReport.html'
 
 # --------- Main Loop ---------#

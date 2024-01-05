@@ -556,22 +556,25 @@ def commit_config():
 
     #check
     output_directory = '/etc/CYBERPATRIOT/'
+    web_directory = '/var/www/CYBERPATRIOT'
     current_directory = os.getcwd()
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
-    '''
-    shutil.copy(current_directory + '/CCC_logo.png', output_directory + 'CCC_logo.png')
-    shutil.copy(current_directory + '/SoCalCCCC.png', output_directory + 'SoCalCCCC.png')
-    shutil.copy(current_directory + '/scoring_engine_logo_windows_icon_5TN_icon.ico', output_directory + 'scoring_engine_logo_windows_icon_5TN_icon.ico')
-    shutil.copy(current_directory + '/scoring_engine.py', output_directory + 'scoring_engine.py')
-    os.chmod(output_directory + 'scoring_engine.py', 0o777)
-    '''
-    shutil.copy(resource_path('CCC_logo.png'), os.path.join(output_directory, 'CCC_logo.png'))
-    shutil.copy(resource_path('SoCalCCCC.png'), os.path.join(output_directory, 'SoCalCCCC.png'))
+    if not os.path.exists(web_directory):
+        os.makedirs(web_directory)
     shutil.copy(resource_path('scoring_engine'), os.path.join(output_directory, 'scoring_engine'))
     shutil.copy(resource_path('ScoringEngineLinuxBig.png'), output_directory + 'ScoringEngineLinuxBig.png')
-    shutil.copy(resource_path('ScoringEngineLinuxBig.png'), output_directory + 'ScoringEngineLinuxBig.png')
+    
+    shutil.copy(resource_path('CCC_logo.png'), os.path.join(web_directory, 'CCC_logo.png'))
+    shutil.copy(resource_path('SoCalCCCC.png'), os.path.join(web_directory, 'SoCalCCCC.png'))
+    shutil.copy(resource_path('ScoringEngineLinuxBig.png'), os.path.join(web_directory + '/ScoringEngineLinuxBig.png'))
     os.chmod(output_directory + 'scoring_engine', 0o777)
+    os.chmod(web_directory + '/CCC_logo.png', 0o777)
+    os.chmod(web_directory + '/SoCalCCCC.png', 0o777)
+    os.chmod(web_directory + '/ScoringEngineLinuxBig.png', 0o777)
+    os.chown ( os.path.join(web_directory, 'CCC_logo.png'), int(os.environ['SUDO_UID']), int(os.environ['SUDO_UID']))
+    os.chown ( os.path.join(web_directory, 'SoCalCCCC.png'), int(os.environ['SUDO_UID']), int(os.environ['SUDO_UID']))
+    os.chown ( web_directory + '/ScoringEngineLinuxBig.png', int(os.environ['SUDO_UID']), int(os.environ['SUDO_UID']))
 
     cron = CronTab(user=os.environ['USER'])
     command = output_directory + 'scoring_engine'
@@ -591,7 +594,6 @@ def commit_config():
 
             # Write the changes to the crontab
             cron.write()
-           
             job = cron.new(command=command, comment='my_cron_job')
             # Create a new cron job
 

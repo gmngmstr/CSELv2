@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "scoring_engine.py", line 750, in <module>
-    time.sleep(20)
-KeyboardInterrupt
